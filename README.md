@@ -4,24 +4,24 @@ A tool for cross-stitchers.
 
 ## Running locally
 
+### First time setup
+
 1. Install [bun](https://bun.com/)
 1. Clone this repo
 1. Install deps: `bun install`
-1. Run the dev server: `bun dev`
+1. Bootstrap the db: `bun sql db:migrate`
 
-TODO: database setup stuff
+### Running
+
+1. Run the dev server: `bun dev`
 
 ## Roadmap
 
-### Users and auth
+### Navigation
 
-- User model
-  - Password system
-- Token authentication
-
-### Core gunk
-
-- Data mapping of colors to threads
+- Homepage lists current user's projects
+- Login page
+- Sign up page
 
 ### Project view
 
@@ -39,9 +39,3 @@ TODO: database setup stuff
 - PDF -> project pipeline
 - Client-side image uploader
 
-### Navigation
-
-- Homepage lists current user's projects
-- Login redirect on homepage
-- Login page
-- Sign up page
