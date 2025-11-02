@@ -1,5 +1,5 @@
-import User from "../../models/user";
-import AuthToken from "../../models/authtoken";
+import DB from "../../models/index";
+const { AuthToken, User } = DB;
 
 const SESSION_KEY = "session";
 

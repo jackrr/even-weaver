@@ -11,8 +11,6 @@
     "sql": "bunx sequelize-cli"
   },
   "dependencies": {
-    "@prisma/adapter-libsql": "^6.18.0",
-    "@prisma/client": "^6.18.0",
     "bun-plugin-tailwind": "^0.0.15",
     "react": "^19",
     "react-dom": "^19",
@@ -27,7 +25,6 @@
     "react-router": "^7.9.5",
     "reflect-metadata": "^0.2.2",
     "sequelize-cli": "^6.6.3",
-    "sequelize-typescript": "^2.1.6",
     "typescript-language-server": "^5.1.0"
   }
 }

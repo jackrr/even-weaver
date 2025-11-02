@@ -2,7 +2,7 @@ import type { Migration } from "sequelize-cli";
 
 const migration: Migration = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("Users", {
+    await queryInterface.createTable("user", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -23,7 +23,7 @@ const migration: Migration = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("Users");
+    await queryInterface.dropTable("user");
   },
 };
 

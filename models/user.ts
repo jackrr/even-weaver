@@ -1,18 +1,27 @@
-import { Table, Model, Column, HasMany } from "sequelize-typescript";
+import type {
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  Association,
+} from "sequelize";
+import { Model } from "sequelize";
 import AuthToken from "./authtoken";
 
 const SPECIAL_CHARS = new Set("_-*!?=<>()[]".split(""));
 
-@Table({ timestamps: true })
-class User extends Model {
-  @Column
-  username: string;
+class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
+  declare id: CreationOptional<number>;
+  declare username: string;
+  declare password: string;
 
-  @Column
-  password: string;
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
 
-  @HasMany(() => AuthToken)
-  authTokens: AuthToken[];
+  declare static associations: {
+    authTokens: Association<User, AuthToken>;
+  };
 
   static validatePassword(password: string): string | null {
     if (password.length < 8) {

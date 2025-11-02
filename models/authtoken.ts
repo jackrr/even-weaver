@@ -1,13 +1,24 @@
-import { Table, Model, Column, BelongsTo } from "sequelize-typescript";
+import type {
+  InferAttributes,
+  InferCreationAttributes,
+  CreationOptional,
+  ForeignKey,
+} from "sequelize";
+import { Model } from "sequelize";
 import User from "./user";
 
-@Table({ timestamps: true })
-class AuthToken extends Model {
-  @Column
-  token: string;
+class AuthToken extends Model<
+  InferAttributes<AuthToken>,
+  InferCreationAttributes<AuthToken>
+> {
+  declare id: CreationOptional<number>;
+  declare token: string;
+  declare userId: ForeignKey<User["id"]>;
 
-  @BelongsTo(() => User)
-  user: User;
+  // createdAt can be undefined during creation
+  declare createdAt: CreationOptional<Date>;
+  // updatedAt can be undefined during creation
+  declare updatedAt: CreationOptional<Date>;
 
   static async generate(user: User) {
     const possibleCharacters =
@@ -20,7 +31,7 @@ class AuthToken extends Model {
       );
     }
 
-    return AuthToken.create({ token, user });
+    return AuthToken.create({ token, userId: user.id });
   }
 }
 

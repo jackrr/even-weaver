@@ -2,7 +2,7 @@ import type { Migration } from "sequelize-cli";
 
 const migration: Migration = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.createTable("AuthTokens", {
+    await queryInterface.createTable("auth_token", {
       id: {
         allowNull: false,
         autoIncrement: true,
@@ -33,7 +33,7 @@ const migration: Migration = {
     });
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable("AuthTokens");
+    await queryInterface.dropTable("auth_token");
   },
 };
 
