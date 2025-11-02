@@ -7,7 +7,8 @@
     "dev": "bun --hot src/index.tsx",
     "start": "NODE_ENV=production bun src/index.tsx",
     "build": "bun run build.ts",
-    "api": "bun run server.ts"
+    "api": "bun run server.ts",
+    "sql": "bunx sequelize-cli"
   },
   "dependencies": {
     "@prisma/adapter-libsql": "^6.18.0",
@@ -15,12 +16,18 @@
     "bun-plugin-tailwind": "^0.0.15",
     "react": "^19",
     "react-dom": "^19",
+    "sequelize": "^6.37.7",
+    "sqlite3": "^5.1.7",
     "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "prisma": "^6.18.0"
+    "react-router": "^7.9.5",
+    "reflect-metadata": "^0.2.2",
+    "sequelize-cli": "^6.6.3",
+    "sequelize-typescript": "^2.1.6",
+    "typescript-language-server": "^5.1.0"
   }
 }

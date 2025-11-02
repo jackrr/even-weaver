@@ -1,21 +1,47 @@
-# bun-react-tailwind-template
+# Even Weaver
 
-To install dependencies:
+A tool for cross-stitchers. 
 
-```bash
-bun install
-```
+## Running locally
 
-To start a development server:
+1. Install [bun](https://bun.com/)
+1. Clone this repo
+1. Install deps: `bun install`
+1. Run the dev server: `bun dev`
 
-```bash
-bun dev
-```
+TODO: database setup stuff
 
-To run for production:
+## Roadmap
 
-```bash
-bun start
-```
+### Users and auth
 
-This project was created using `bun init` in bun v1.2.20. [Bun](https://bun.com) is a fast all-in-one JavaScript runtime.
+- User model
+  - Password system
+- Token authentication
+
+### Core gunk
+
+- Data mapping of colors to threads
+
+### Project view
+
+- Client side nav of project w/ drag interactions
+- API to fetch project state (return everything)
+- API to update state (require full state send)
+- Global menu
+- Color and symbol key
+- Tap toggle completion
+- Opacity for completion feedback
+
+### Project creation
+
+- Image -> project pipeline
+- PDF -> project pipeline
+- Client-side image uploader
+
+### Navigation
+
+- Homepage lists current user's projects
+- Login redirect on homepage
+- Login page
+- Sign up page

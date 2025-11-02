@@ -1,10 +1,23 @@
 import { serve } from "bun";
 import index from "./index.html";
+import { login, createUser, isLoggedIn } from "./api/auth";
 
 const server = serve({
   routes: {
     // Serve index.html for all unmatched routes.
     "/*": index,
+
+    "/logged-in": {
+      GET: isLoggedIn,
+    },
+
+    "/login": {
+      POST: login,
+    },
+
+    "/accounts": {
+      POST: createUser,
+    },
 
     "/api/hello": {
       async GET(req) {
@@ -21,7 +34,7 @@ const server = serve({
       },
     },
 
-    "/api/hello/:name": async req => {
+    "/api/hello/:name": async (req) => {
       const name = req.params.name;
       return Response.json({
         message: `Hello, ${name}!`,
