@@ -31,9 +31,9 @@
     "noUnusedParameters": false,
     "noPropertyAccessFromIndexSignature": false,
 
-		// sequelize-typescript stuff
-		"experimentalDecorators": true,
-		"emitDecoratorMetadata": true
+    // sequelize-typescript stuff
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
 
   "exclude": ["dist", "node_modules"]

@@ -8,6 +8,7 @@
     "start": "NODE_ENV=production bun src/index.ts",
     "build": "bun run build.ts",
     "api": "bun run server.ts",
+    "format": "bun run prettier --write .",
     "sql": "bunx sequelize-cli"
   },
   "dependencies": {
@@ -22,6 +23,7 @@
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "prettier": "^3.6.2",
     "react-router": "^7.9.5",
     "reflect-metadata": "^0.2.2",
     "sequelize-cli": "^6.6.3",

@@ -1,6 +1,6 @@
 # Even Weaver
 
-A tool for cross-stitchers. 
+A tool for cross-stitchers.
 
 ## Running locally
 
@@ -38,4 +38,3 @@ A tool for cross-stitchers.
 - Image -> project pipeline
 - PDF -> project pipeline
 - Client-side image uploader
-
