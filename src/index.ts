@@ -1,6 +1,6 @@
 import { serve } from "bun";
 import index from "./index.html";
-import { login, createUser, isLoggedIn } from "./api/auth";
+import { login, logout, createUser, isLoggedIn } from "./api/auth";
 
 const server = serve({
   routes: {
@@ -13,6 +13,10 @@ const server = serve({
 
     "/login": {
       POST: login,
+    },
+
+    "/logout": {
+      GET: logout,
     },
 
     "/accounts": {

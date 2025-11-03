@@ -16,7 +16,7 @@ const migration: Migration = {
         type: Sequelize.DataTypes.INTEGER,
         references: {
           model: {
-            tableName: "users",
+            tableName: "user",
           },
           key: "id",
         },

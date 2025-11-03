@@ -7,7 +7,10 @@ export async function authenticate<T extends string>(req: Bun.BunRequest<T>) {
   const token = req.cookies.get(SESSION_KEY);
   if (!token) return Promise.reject("No valid session token");
 
-  const user = await User.findOne({ where: { "auth_token.token": token } });
+  // const user = await User.findOne({ where: { "$authTokens.token$": token } });
+  const user = await User.findOne({
+    include: [{ model: AuthToken, as: "authTokens", where: { token } }],
+  });
   if (!user) return Promise.reject("Invalid session token");
   return user;
 }
@@ -29,11 +32,16 @@ export async function login(req: Bun.BunRequest<"/login">) {
   return Response.redirect("/");
 }
 
+export function logout(req: Bun.BunRequest<"/logout">) {
+  req.cookies.delete(SESSION_KEY);
+  return Response.redirect("/login");
+}
+
 export async function createUser(req: Bun.BunRequest<"/accounts">) {
   const payload = await req.json();
   const user = await User.createWithPassword(
     payload.username,
-    payload.passowrd,
+    payload.password,
   );
   const token = await AuthToken.generate(user);
 

@@ -17,6 +17,12 @@ A tool for cross-stitchers.
 
 ## Roadmap
 
+### Nuts n bolts
+
+- Indexes on username and authtoken token
+- Token expiry
+- FIX: Reset client auth state on login/register (effect in auth context is not re-running)
+
 ### Navigation
 
 - Homepage lists current user's projects
