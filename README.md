@@ -15,6 +15,15 @@ A tool for cross-stitchers.
 
 1. Run the dev server: `bun dev`
 
+### Updating data models
+
+Note: this kinda sucks, because the generated migration and model files are js, not ts.
+
+Basically just generating the file for the timestamped name... everything else is copy-pasted from prior migrations and entities.
+
+`bun sql model:generate` # migration file and new model file
+`bun sql migration:generate` # just a migration file
+
 ## Roadmap
 
 ### Nuts n bolts
