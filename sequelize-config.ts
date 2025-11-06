@@ -5,10 +5,18 @@ const DEFAULT_CONFIG = {
   user: "root",
   password: "",
   dialect: "sqlite" as "sqlite",
+  logging: false,
 };
 
 export default {
-  development: { ...DEFAULT_CONFIG, storage: DB_PATH + "dev_db.sqlite" },
+  development: {
+    ...DEFAULT_CONFIG,
+    storage: DB_PATH + "dev_db.sqlite",
+    logging: true,
+  },
   test: { ...DEFAULT_CONFIG, storage: ":memory:" },
-  production: { ...DEFAULT_CONFIG, storage: DB_PATH + "db.sqlite" },
+  production: {
+    ...DEFAULT_CONFIG,
+    storage: DB_PATH + "db.sqlite",
+  },
 };

@@ -2,7 +2,7 @@ import { serve } from "bun";
 import index from "./index.html";
 import { login, logout, createUser, isLoggedIn } from "./api/auth";
 
-const server = serve({
+export const server = serve({
   routes: {
     // Serve index.html for all unmatched routes.
     "/*": index,
@@ -46,7 +46,7 @@ const server = serve({
     },
   },
 
-  development: process.env.NODE_ENV !== "production" && {
+  development: process.env.NODE_ENV === "development" && {
     // Enable browser hot reloading in development
     hmr: true,
 

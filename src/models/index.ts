@@ -1,5 +1,5 @@
 import { Sequelize, DataTypes } from "sequelize";
-import dbConfig from "../config/config";
+import dbConfig from "../../sequelize-config";
 import User from "./user";
 import AuthToken from "./authtoken";
 
@@ -55,7 +55,7 @@ User.hasMany(AuthToken, {
   as: "authTokens",
 });
 
-AuthToken.belongsTo(User, { targetKey: "id" });
+AuthToken.belongsTo(User, { targetKey: "id", foreignKey: "userId" });
 
 export default {
   sequelize,

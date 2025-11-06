@@ -1,4 +1,4 @@
-import DB from "../../models/index";
+import DB from "../models/index";
 const { AuthToken, User } = DB;
 
 const SESSION_KEY = "session";
@@ -7,7 +7,6 @@ export async function authenticate<T extends string>(req: Bun.BunRequest<T>) {
   const token = req.cookies.get(SESSION_KEY);
   if (!token) return Promise.reject("No valid session token");
 
-  // const user = await User.findOne({ where: { "$authTokens.token$": token } });
   const user = await User.findOne({
     include: [{ model: AuthToken, as: "authTokens", where: { token } }],
   });
