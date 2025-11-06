@@ -1,4 +1,30 @@
-[
+import type { Migration } from "sequelize-cli";
+
+const seedColors: Migration = {
+  async up(queryInterface, Sequelize) {
+    await queryInterface.bulkInsert(
+      "color",
+      colors.map((c) => ({
+        name: c[1],
+        key: c[0],
+        r: parseInt(c[2] as string),
+        g: parseInt(c[3] as string),
+        b: parseInt(c[4] as string),
+        hex: c[5],
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      })),
+    );
+  },
+
+  async down(queryInterface, Sequelize) {
+    await queryInterface.bulkDelete("color", {}, {});
+  },
+};
+
+export default seedColors;
+
+const colors = [
   ["3713", "Salmon Very Light", "255", "226", "226", "ffe2e2"],
   ["761", "Salmon Light", "255", "201", "201", "ffc9c9"],
   ["760", "Salmon", "245", "173", "173", "f5adad"],
