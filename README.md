@@ -11,7 +11,9 @@ A tool for cross-stitchers.
 1. Install [bun](https://bun.com/)
 1. Clone this repo
 1. Install deps: `bun install`
-1. Bootstrap the db: `bun sql db:migrate`
+1. Bootstrap the db
+   1. Run migrations: `bun sql db:migrate`
+   1. Seeds: `bun sql db:seed:all`
 
 ### Running
 
