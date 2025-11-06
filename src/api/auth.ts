@@ -1,4 +1,5 @@
 import DB from "../models/index";
+import { Op } from "sequelize";
 const { AuthToken, User } = DB;
 
 const SESSION_KEY = "session";
@@ -8,7 +9,18 @@ export async function authenticate<T extends string>(req: Bun.BunRequest<T>) {
   if (!token) return Promise.reject("No valid session token");
 
   const user = await User.findOne({
-    include: [{ model: AuthToken, as: "authTokens", where: { token } }],
+    include: [
+      {
+        model: AuthToken,
+        as: "authTokens",
+        where: {
+          token,
+          expiresAt: {
+            [Op.or]: [null, { [Op.gt]: new Date() }],
+          },
+        },
+      },
+    ],
   });
   if (!user) return Promise.reject("Invalid session token");
   return user;

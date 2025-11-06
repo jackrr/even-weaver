@@ -30,8 +30,6 @@ Basically just generating the file for the timestamped name... everything else i
 
 ### Nuts n bolts
 
-- Indexes on username and authtoken token
-- Token expiry
 - FIX: Reset client auth state on login/register (effect in auth context is not re-running)
 
 ### Navigation

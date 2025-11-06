@@ -43,6 +43,7 @@ AuthToken.init(
       type: new DataTypes.STRING(16),
       allowNull: false,
     },
+    expiresAt: DataTypes.DATE,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   },

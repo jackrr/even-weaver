@@ -1,36 +1,60 @@
 import { beforeEach, expect, test, describe } from "bun:test";
 const { AuthToken, User } = DB;
+import { addSeconds, subSeconds } from "date-fns";
 import DB from "../models/index";
 
-test("/logged-in gives 404 missing a session token", async () => {
-  const res = await fetch("localhost:3000/logged-in");
-  expect(res.status).toBe(401);
-});
-
-test("/logged-in gives 404 with invalid session token", async () => {
-  const res = await fetch("localhost:3000/logged-in", {
-    headers: {
-      Cookie: "session=abc",
-    },
+describe("/logged-in", () => {
+  test("401 missing a session token", async () => {
+    const res = await fetch("localhost:3000/logged-in");
+    expect(res.status).toBe(401);
   });
 
-  expect(res.status).toBe(401);
-});
+  test("401 with invalid session token", async () => {
+    const res = await fetch("localhost:3000/logged-in", {
+      headers: {
+        Cookie: "session=abc",
+      },
+    });
 
-test("/logged-in gives 200 with valid session token", async () => {
-  const user = await User.createWithPassword("username", "password!23");
-  const token = await AuthToken.generate(user);
-
-  const res = await fetch("localhost:3000/logged-in", {
-    headers: {
-      Cookie: `session=${token.token}`,
-    },
+    expect(res.status).toBe(401);
   });
 
-  expect(res.status).toBe(200);
+  test("401 with expired session token", async () => {
+    const user = await User.createWithPassword("username", "password!23");
+    const token = await AuthToken.create({
+      userId: user.id,
+      token: "a-token",
+      expiresAt: subSeconds(new Date(), 1),
+    });
+
+    const res = await fetch("localhost:3000/logged-in", {
+      headers: {
+        Cookie: `session=${token.token}`,
+      },
+    });
+
+    expect(res.status).toBe(401);
+  });
+
+  test("200 with valid session token", async () => {
+    const user = await User.createWithPassword("username", "password!23");
+    const token = await AuthToken.create({
+      userId: user.id,
+      token: "a-token",
+      expiresAt: addSeconds(new Date(), 100),
+    });
+
+    const res = await fetch("localhost:3000/logged-in", {
+      headers: {
+        Cookie: `session=${token.token}`,
+      },
+    });
+
+    expect(res.status).toBe(200);
+  });
 });
 
-describe("login", () => {
+describe("/login", () => {
   const username = "username";
   const password = "password!23";
 
@@ -52,19 +76,19 @@ describe("login", () => {
     });
   }
 
-  test("/login gives 200 with valid creds", async () => {
+  test("200 with valid creds", async () => {
     const res = await login(username, password);
     expect(res.status).toBe(302);
     expect(res.headers.getSetCookie().length).toBe(1);
     expect(res.headers.getSetCookie()[0]).toMatch(/^session.*/);
   });
 
-  test("/login gives 400 with bad username", async () => {
+  test("400 with bad username", async () => {
     const res = await login("nottheuser", password);
     expect(res.status).toBe(400);
   });
 
-  test("/login gives 400 with bad password", async () => {
+  test("400 with bad password", async () => {
     const res = await login(username, "notthepassword357!");
     expect(res.status).toBe(400);
   });

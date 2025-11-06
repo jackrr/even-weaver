@@ -4,12 +4,12 @@ const migration: Migration = {
   async up(queryInterface, Sequelize) {
     const transaction = await queryInterface.sequelize.transaction();
     try {
-      await queryInterface.addColumn("auth_token", "expires_at", {
+      await queryInterface.addColumn("auth_token", "expiresAt", {
         type: Sequelize.DataTypes.DATE,
         allowNull: true,
       });
 
-      await queryInterface.addIndex("auth_token", ["expires_at"], {
+      await queryInterface.addIndex("auth_token", ["expiresAt"], {
         name: "auth_token_expires_at",
         unique: false,
         transaction,
@@ -38,7 +38,7 @@ const migration: Migration = {
 
     try {
       await queryInterface.removeIndex("auth_token", "auth_token_expires_at");
-      await queryInterface.removeColumn("auth_token", "expires_at");
+      await queryInterface.removeColumn("auth_token", "expiresAt");
       await queryInterface.removeIndex("auth_token", "auth_token_token");
       await transaction.commit();
     } catch (err) {

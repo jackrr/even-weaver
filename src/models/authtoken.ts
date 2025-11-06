@@ -6,6 +6,9 @@ import type {
 } from "sequelize";
 import { Model } from "sequelize";
 import User from "./user";
+import { addDays } from "date-fns";
+
+const TOKEN_EXPIRE_IN_DAYS = 180;
 
 class AuthToken extends Model<
   InferAttributes<AuthToken>,
@@ -14,6 +17,7 @@ class AuthToken extends Model<
   declare id: CreationOptional<number>;
   declare token: string;
   declare userId: ForeignKey<User["id"]>;
+  declare expiresAt: CreationOptional<Date>;
 
   // createdAt can be undefined during creation
   declare createdAt: CreationOptional<Date>;
@@ -31,7 +35,11 @@ class AuthToken extends Model<
       );
     }
 
-    return AuthToken.create({ token, userId: user.id });
+    return AuthToken.create({
+      token,
+      userId: user.id,
+      expiresAt: addDays(new Date(), TOKEN_EXPIRE_IN_DAYS),
+    });
   }
 }
 
