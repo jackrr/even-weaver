@@ -2,6 +2,8 @@
 
 A tool for cross-stitchers.
 
+![Tests](https://github.com/jackrr/even-weaver/actions/workflows/test.yml/badge.svg)
+
 ## Running locally
 
 ### First time setup
