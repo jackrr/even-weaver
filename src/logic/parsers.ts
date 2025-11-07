@@ -1,72 +1,9 @@
 import sharp from "sharp";
 import { Queue } from "../util/queue";
-
-class Coord {
-  x: number;
-  y: number;
-
-  constructor(x: number, y: number) {
-    this.x = x;
-    this.y = y;
-  }
-
-  equals(o: Coord) {
-    return this.x === o.x && this.y === o.y;
-  }
-
-  toString() {
-    return `${this.x}x${this.y}`;
-  }
-
-  neighbors(boundX: number, boundY: number) {
-    const neighbors = [];
-    for (const x of [-1, 0, 1]) {
-      for (const y of [-1, 0, 1]) {
-        if (x === 0 && y === 0) continue;
-
-        const coord = new Coord(this.x + x, this.y + y);
-        if (coord.x < 0 || coord.x >= boundX) continue;
-        if (coord.y < 0 || coord.y >= boundY) continue;
-
-        neighbors.push(coord);
-      }
-    }
-
-    return neighbors;
-  }
-}
-
-class Color {
-  r: number;
-  g: number;
-  b: number;
-
-  constructor(r: number, g: number, b: number) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
-  }
-
-  equals(o: Color) {
-    return this.r === o.r && this.g === o.g && this.b === o.b;
-  }
-
-  near(o: Color) {
-    const NEAR_THRESHOLD = 16;
-    if (this.r < o.r - NEAR_THRESHOLD || this.r > o.r + NEAR_THRESHOLD)
-      return false;
-    if (this.g < o.g - NEAR_THRESHOLD || this.g > o.g + NEAR_THRESHOLD)
-      return false;
-    if (this.b < o.b - NEAR_THRESHOLD || this.b > o.b + NEAR_THRESHOLD)
-      return false;
-
-    return true;
-  }
-
-  toString() {
-    return `${this.r},${this.g},${this.b}`;
-  }
-}
+import Color from "../util/color";
+import Coord from "../util/coord";
+import { Drawing } from "../util/draw";
+import path from "path";
 
 class Shape {
   coords: Map<string, Coord>;
@@ -112,6 +49,13 @@ class Shape {
 
   minY() {
     return this.yBounds[0];
+  }
+
+  center() {
+    return new Coord(
+      this.xBounds[0] + this.width() / 2,
+      this.yBounds[0] + this.height() / 2,
+    );
   }
 }
 
@@ -194,11 +138,14 @@ export async function weaveFromGridPng(imagePath: string) {
   console.log(cells.length, 140 * 140);
 
   // 3. establish relative coordinate grid for shapes
+  const drawing = new Drawing();
   for (const cell of cells) {
-    console.log(cell);
+    drawing.drawCircle(cell.center(), 10, cell.color);
 
-    if (cell.minY() > 1000) break;
+    // TODO: average color on cell? somehow map..
   }
+
+  await drawing.save(path.resolve("tmp", "debug.png"));
 
   // 1. Walk grid
   // 2. Map grid color to db color
