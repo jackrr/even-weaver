@@ -52,11 +52,4 @@ Basically just generating the file for the timestamped name... everything else i
 
 ### Project creation
 
-- Image -> project pipeline
-  1. resize image to desired scale (user input for w x h)
-  2. map each pixel to nearest thread color in colors db
-  3. generate a new "Weave" object with encoded pixel mapping
-- Existing weave PDF -> project pipeline
-  1. Manually crop out existing grid from PDF
-  2. Script to convert cropped grid to weave
 - Client-side image uploading form submission
