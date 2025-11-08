@@ -1,3 +1,9 @@
+interface Colorish {
+  r: number;
+  g: number;
+  b: number;
+}
+
 class Color {
   r: number;
   g: number;
@@ -9,11 +15,11 @@ class Color {
     this.b = b;
   }
 
-  equals(o: Color) {
+  equals(o: Colorish) {
     return this.r === o.r && this.g === o.g && this.b === o.b;
   }
 
-  near(o: Color) {
+  near(o: Colorish) {
     const NEAR_THRESHOLD = 16;
     if (this.r < o.r - NEAR_THRESHOLD || this.r > o.r + NEAR_THRESHOLD)
       return false;
@@ -23,6 +29,12 @@ class Color {
       return false;
 
     return true;
+  }
+
+  distance(m: Colorish) {
+    return (
+      Math.abs(this.r - m.r) + Math.abs(this.g - m.g) + Math.abs(this.b - m.b)
+    );
   }
 
   toString() {

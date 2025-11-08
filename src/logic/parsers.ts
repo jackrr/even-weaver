@@ -1,9 +1,12 @@
 import sharp from "sharp";
+import type { Pattern } from "../models/weave";
 import { Queue } from "../util/queue";
 import Color from "../util/color";
 import Coord from "../util/coord";
-import { Drawing } from "../util/draw";
-import path from "path";
+import db from "../models/index";
+
+// import { Drawing } from "../util/draw";
+// import path from "path";
 
 class Shape {
   coords: Map<string, Coord>;
@@ -127,28 +130,106 @@ function findCells(
   return shapes;
 }
 
-export async function weaveFromGridPng(imagePath: string) {
+type Cell = {
+  color: Color;
+  center: Coord;
+  gridPos: Coord;
+};
+
+/*
+Walk the image to sample colors, skipping at configured offsets
+ */
+function findCellsDumb(
+  pixels: Uint8ClampedArray<ArrayBufferLike>,
+  width: number,
+  height: number,
+) {
+  const PIXEL_SIZE = 4;
+
+  function colorAt(c: Coord): Color {
+    const offset = (c.y * width + c.x) * PIXEL_SIZE;
+    return new Color(
+      pixels[offset] as number,
+      pixels[offset + 1] as number,
+      pixels[offset + 2] as number,
+    );
+  }
+
+  const cells: Cell[] = [];
+  const X_START_OFFSET = 7;
+  const X_SKIP = 15.2;
+  const Y_START_OFFSET = 7;
+  const Y_SKIP = 15.2;
+
+  let x = X_START_OFFSET;
+  let y = Y_START_OFFSET;
+  let gridX = 0;
+  let gridY = 0;
+
+  while (y < height) {
+    while (x < width) {
+      const center = new Coord(Math.round(x), Math.round(y));
+      cells.push({
+        center,
+        color: colorAt(center),
+        gridPos: new Coord(x, y),
+      });
+      x += X_SKIP;
+      gridX += 1;
+    }
+
+    x = X_START_OFFSET;
+    gridX = 0;
+    y += Y_SKIP;
+    gridY += 1;
+  }
+
+  return cells;
+}
+
+export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
   const { data, info } = await sharp(imagePath)
     .raw()
     .toBuffer({ resolveWithObject: true });
 
   const pixelArray = new Uint8ClampedArray(data.buffer);
 
-  const cells = findCells(pixelArray, info.width, info.height);
-  console.log(cells.length, 140 * 140);
+  const cells = findCellsDumb(pixelArray, info.width, info.height);
 
-  // 3. establish relative coordinate grid for shapes
-  const drawing = new Drawing();
+  // Debug stuff
+  // const drawing = new Drawing();
+  // for (const cell of cells) {
+  //   drawing.drawCircle(cell.center, 6, cell.color);
+  // }
+  // await drawing.save(path.resolve("tmp", "debug.png"));
+  const colors = await db.Color.findAll();
+  if (colors.length === 0)
+    throw new Error("Expected at least 1 color in the DB");
+
+  const output: Pattern = {};
+  const colorCache: { [colorString: string]: number } = {};
   for (const cell of cells) {
-    drawing.drawCircle(cell.center(), 10, cell.color);
+    const { x, y } = cell.center;
 
-    // TODO: average color on cell? somehow map..
+    if (!output[y]) output[y] = {};
+
+    let colorId = colorCache[cell.color.toString()];
+    if (!colorId) {
+      colorId = colors[0]!.id as number;
+      let minDistance = 100000;
+
+      for (const color of colors) {
+        const dist = cell.color.distance(color);
+        if (dist < minDistance) colorId = color.id;
+      }
+      colorCache[cell.color.toString()] = colorId;
+    }
+
+    output[y][x] = {
+      colorId,
+      state: "todo",
+    };
   }
 
-  await drawing.save(path.resolve("tmp", "debug.png"));
-
-  // 1. Walk grid
-  // 2. Map grid color to db color
-  // 3. Convert to "Weave" format
-  // 4. accept inputs of weave name and user id to attach to
+  return output;
 }

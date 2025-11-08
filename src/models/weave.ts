@@ -23,4 +23,13 @@ class Weave extends Model<
   declare updatedAt: CreationOptional<Date>;
 }
 
+export type Pattern = {
+  [y: number]: {
+    [x: number]: {
+      colorId: number;
+      state: "todo" | "done";
+    };
+  };
+};
+
 export default Weave;
