@@ -28,9 +28,9 @@ describe("jpeg image input", () => {
 
     const width = 150;
     const height = 100;
-    await sharp(buffer)
-      .resize(width, height)
-      .toFile(path.resolve("tmp", "resized.jpg"));
+    // await sharp(buffer)
+    //   .resize(width, height)
+    //   .toFile(path.resolve("tmp", "resized.jpg"));
     const pattern = await patternFromImage(buffer, width, height);
 
     expect(Object.keys(pattern).length).toBe(height);
