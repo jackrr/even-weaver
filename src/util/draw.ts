@@ -1,11 +1,16 @@
 import sharp from "sharp";
-import Color from "./color";
 import Coord from "./coord";
+
+interface RGB {
+  r: number;
+  g: number;
+  b: number;
+}
 
 type Circle = {
   center: Coord;
   radius: number;
-  color: Color;
+  color: RGB;
 };
 
 export class Drawing {
@@ -19,7 +24,7 @@ export class Drawing {
     this.height = 0;
   }
 
-  drawCircle(center: Coord, radius: number, color: Color) {
+  drawCircle(center: Coord, radius: number, color: RGB) {
     this.width = Math.max(this.width, center.x + radius);
     this.height = Math.max(this.height, center.y + radius);
 

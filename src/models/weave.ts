@@ -26,8 +26,8 @@ class Weave extends Model<
 export type Pattern = {
   [y: number]: {
     [x: number]: {
-      colorId: number;
-      state: "todo" | "done";
+      c: number;
+      s: "todo" | "done";
     };
   };
 };
