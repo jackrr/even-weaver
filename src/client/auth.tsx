@@ -1,5 +1,6 @@
 import {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useState,
@@ -7,13 +8,16 @@ import {
 } from "react";
 import { useNavigate } from "react-router";
 
-export const AuthContext = createContext({ loading: true, loggedIn: false });
+export const AuthContext = createContext({
+  loading: true,
+  loggedIn: false,
+  reverify: () => {},
+});
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
+  const reverify = useCallback(() => {
     async function isLoggedIn() {
       try {
         const res = await fetch("/logged-in");
@@ -30,7 +34,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoggedIn();
   }, [setLoggedIn, setLoading]);
 
-  return <AuthContext value={{ loggedIn, loading }}>{children}</AuthContext>;
+  useEffect(() => {
+    reverify();
+  }, [reverify]);
+
+  return (
+    <AuthContext value={{ loggedIn, loading, reverify }}>
+      {children}
+    </AuthContext>
+  );
+}
+
+export function useReverifyAuth() {
+  const { reverify } = useContext(AuthContext);
+  return reverify;
 }
 
 export function useAuthWall() {

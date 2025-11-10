@@ -1,3 +1,4 @@
+import { errorResponse, ErrorCode } from "@/util/error";
 import DB from "../models/index";
 import { Op } from "sequelize";
 const { AuthToken, User } = DB;
@@ -6,7 +7,11 @@ const SESSION_KEY = "session";
 
 export async function authenticate<T extends string>(req: Bun.BunRequest<T>) {
   const token = req.cookies.get(SESSION_KEY);
-  if (!token) return Promise.reject("No valid session token");
+  if (!token)
+    return Promise.reject({
+      status: ErrorCode.Unauthenticated,
+      message: "No session token.",
+    });
 
   const user = await User.findOne({
     include: [
@@ -22,7 +27,11 @@ export async function authenticate<T extends string>(req: Bun.BunRequest<T>) {
       },
     ],
   });
-  if (!user) return Promise.reject("Invalid session token");
+  if (!user)
+    return Promise.reject({
+      status: ErrorCode.Unauthenticated,
+      message: "Session token invalid.",
+    });
   return user;
 }
 
@@ -63,8 +72,8 @@ export async function createUser(req: Bun.BunRequest<"/accounts">) {
 export async function isLoggedIn(req: Bun.BunRequest<"/logged-in">) {
   try {
     await authenticate(req);
+    return Response.json({ status: "ok" });
   } catch (e) {
-    return Response.json(e, { status: 401 });
+    return errorResponse(e);
   }
-  return Response.json({ status: "ok" });
 }

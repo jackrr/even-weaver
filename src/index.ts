@@ -1,6 +1,13 @@
 import { serve } from "bun";
 import index from "./index.html";
 import { login, logout, createUser, isLoggedIn } from "./api/auth";
+import {
+  getWeave,
+  updateWeave,
+  deleteWeave,
+  getUserWeaves,
+  createWeave,
+} from "./api/weaves";
 
 export const server = serve({
   routes: {
@@ -23,26 +30,14 @@ export const server = serve({
       POST: createUser,
     },
 
-    "/api/hello": {
-      async GET(req) {
-        return Response.json({
-          message: "Hello, world!",
-          method: "GET",
-        });
-      },
-      async PUT(req) {
-        return Response.json({
-          message: "Hello, world!",
-          method: "PUT",
-        });
-      },
+    "/weaves/:id": {
+      GET: getWeave,
+      PUT: updateWeave,
+      DELETE: deleteWeave,
     },
-
-    "/api/hello/:name": async (req) => {
-      const name = req.params.name;
-      return Response.json({
-        message: `Hello, ${name}!`,
-      });
+    "/weaves": {
+      GET: getUserWeaves,
+      POST: createWeave,
     },
   },
 

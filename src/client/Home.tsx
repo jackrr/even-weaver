@@ -1,3 +1,4 @@
+import Button from "./components/Button";
 import { useAuthWall } from "./auth";
 
 export default function Home() {
@@ -7,6 +8,7 @@ export default function Home() {
     <>
       <h1>Home</h1>
       <a href="/logout">Log Out</a>
+      <Button onClick={() => createProject()}>New Project</Button>
     </>
   );
 }

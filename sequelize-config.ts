@@ -12,7 +12,7 @@ export default {
   development: {
     ...DEFAULT_CONFIG,
     storage: DB_PATH + "dev_db.sqlite",
-    logging: true,
+    logging: console.log,
   },
   test: { ...DEFAULT_CONFIG, storage: ":memory:" },
   production: {

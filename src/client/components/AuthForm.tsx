@@ -1,12 +1,14 @@
 import { useRef } from "react";
+import { useReverifyAuth } from "../auth";
 
 export default function AuthForm({ kind }: { kind: "login" | "register" }) {
   const usernameRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
+  const reverifyAuth = useReverifyAuth();
 
   function submitForm() {
     async function submit() {
-      const res = await fetch(kind === "login" ? "/login" : "/accounts", {
+      await fetch(kind === "login" ? "/login" : "/accounts", {
         method: "post",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -14,6 +16,8 @@ export default function AuthForm({ kind }: { kind: "login" | "register" }) {
           password: passwordRef.current?.value,
         }),
       });
+
+      reverifyAuth();
     }
 
     submit();

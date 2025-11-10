@@ -1,6 +1,6 @@
 # Even Weaver
 
-A tool for cross-stitchers.
+A tool for cross stitchers.
 
 ![Tests](https://github.com/jackrr/even-weaver/actions/workflows/test.yml/badge.svg)
 
@@ -10,7 +10,7 @@ A tool for cross-stitchers.
 
 1. Install [bun](https://bun.com/)
 1. Clone this repo
-1. Install deps: `bun install`
+1. Install dependencies: `bun install`
 1. Bootstrap the db
    1. Run migrations: `bun sql db:migrate`
    1. Seeds: `bun sql db:seed:all`
@@ -21,7 +21,7 @@ A tool for cross-stitchers.
 
 ### Updating data models
 
-Note: this kinda sucks, because the generated migration and model files are js, not ts.
+Note: this kinda sucks, because the generated migration and model files are JavaScript, not TypeScript.
 
 Basically just generating the file for the timestamped name... everything else is copy-pasted from prior migrations and entities.
 
@@ -30,19 +30,13 @@ Basically just generating the file for the timestamped name... everything else i
 
 ## Roadmap
 
-### Nuts n bolts
-
-- FIX: Reset client auth state on login/register (effect in auth context is not re-running)
-
 ### Navigation
 
 - Homepage lists current user's projects
-- Login page
-- Sign up page
 
 ### Project view
 
-- Client side nav of project w/ drag interactions
+- Client side nav of project with drag interactions
 - API to fetch project state (return everything)
 - API to update state (require full state send)
 - Global menu
@@ -53,3 +47,8 @@ Basically just generating the file for the timestamped name... everything else i
 ### Project creation
 
 - Client-side image uploading form submission
+
+### Polish
+
+- Auth pages (login + sign-up)
+- Nav bar (logout, username, site title, current context)

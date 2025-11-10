@@ -1,7 +1,8 @@
 import { beforeEach, expect, test, describe } from "bun:test";
-const { AuthToken, User } = DB;
 import { addSeconds, subSeconds } from "date-fns";
 import DB from "../models/index";
+
+const { AuthToken, User } = DB;
 
 describe("/logged-in", () => {
   test("401 missing a session token", async () => {
