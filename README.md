@@ -44,9 +44,12 @@ Basically just generating the file for the timestamped name... everything else i
 
 ### Project creation
 
-- Client-side image uploading form submission (maybe resize image and generate payload in the client?)
+- Preview of generated image
+- Persistence
 
 ### Polish
 
 - Auth pages (login + sign-up)
 - Nav bar (logout, username, site title, current context)
+- Create project form
+- Project list page
