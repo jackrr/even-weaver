@@ -12,7 +12,5 @@ export default function AuthedApp() {
     staleTime: "static",
   });
 
-  console.log("In authed app!");
-
   return <Outlet />;
 }

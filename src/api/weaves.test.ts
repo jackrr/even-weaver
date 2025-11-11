@@ -4,9 +4,9 @@ import type User from "../models/user";
 import DB from "../models/index";
 import { fetchAsUser } from "../test-helpers";
 
-describe("GET /weaves", () => {
+describe("GET /api/weaves", () => {
   const { Weave, User } = DB;
-  const url = "localhost:3000/weaves";
+  const url = "localhost:3000/api/weaves";
 
   let authedFetch: Awaited<ReturnType<typeof fetchAsUser>>;
   let user: User;
@@ -75,9 +75,9 @@ describe("GET /weaves", () => {
   });
 });
 
-describe("POST /weaves", () => {
+describe("POST /api/weaves", () => {
   const { Weave, User } = DB;
-  const url = "localhost:3000/weaves";
+  const url = "localhost:3000/api/weaves";
 
   let authedFetch: Awaited<ReturnType<typeof fetchAsUser>>;
   let user: User;
@@ -107,9 +107,9 @@ describe("POST /weaves", () => {
   });
 });
 
-describe("/weaves/:id", () => {
+describe("/api/weaves/:id", () => {
   const { Weave, User } = DB;
-  const url = "localhost:3000/weaves";
+  const url = "localhost:3000/api/weaves";
 
   let authedFetch: Awaited<ReturnType<typeof fetchAsUser>>;
   let user: User;

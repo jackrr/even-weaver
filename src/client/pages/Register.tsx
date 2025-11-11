@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import AuthForm from "./components/AuthForm";
-import { useUnauthedWall } from "./auth";
+import AuthForm from "@/client/components/AuthForm";
+import { useUnauthedWall } from "@/client/auth";
 
 export default function Login() {
   useUnauthedWall();

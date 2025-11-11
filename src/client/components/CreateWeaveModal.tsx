@@ -1,24 +1,33 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentProps } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type Pattern } from "@/models/weave";
 import Modal from "./Modal";
 import PatternPreview from "./PatternPreview";
-import { fetchColors } from "../lib/api";
+import { fetchColors, createWeave } from "../lib/api";
 import { imageToPattern } from "../lib/image";
 
 type Props = Pick<ComponentProps<typeof Modal>, "open" | "toggleOpen">;
 
-export default function CreateProjectModal({ open, toggleOpen }: Props) {
+export default function CreateWeaveModal({ open, toggleOpen }: Props) {
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
   const [imagePath, setImagePath] = useState<File | null>();
   const [pattern, setPattern] = useState<Pattern>();
+  const queryClient = useQueryClient();
 
   const { data: colors } = useQuery({
     queryKey: ["colors"],
     queryFn: fetchColors,
     staleTime: "static",
+  });
+
+  const { mutate: create } = useMutation({
+    mutationFn: createWeave,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["weaves"] });
+      toggleOpen(false);
+    },
   });
 
   useEffect(() => {
@@ -31,6 +40,13 @@ export default function CreateProjectModal({ open, toggleOpen }: Props) {
 
     convertImage();
   }, [imagePath, width, height, setPattern, colors]);
+
+  async function submit() {
+    if (!pattern) return alert("Upload an image first");
+    if (!nameRef.current?.value) return alert("Please add a name");
+
+    create({ name: nameRef.current?.value, pattern });
+  }
 
   // TODO: form submission to backend via button if name and pattern are established
   const nameRef = useRef<HTMLInputElement>(null);
@@ -58,6 +74,7 @@ export default function CreateProjectModal({ open, toggleOpen }: Props) {
         }
       />
       {pattern ? <PatternPreview pattern={pattern} /> : null}
+      <button onClick={submit}>Create Weave</button>
     </Modal>
   );
 }

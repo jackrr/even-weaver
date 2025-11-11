@@ -1,8 +1,9 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useState } from "react";
 import "./index.css";
 import { AuthProvider } from "./auth";
 import Routes from "./Routes";
-import { useState } from "react";
+import Header from "./components/Header";
 
 export function App() {
   const [client] = useState(() => new QueryClient());
@@ -10,6 +11,7 @@ export function App() {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
+        <Header />
         <Routes />
       </AuthProvider>
     </QueryClientProvider>

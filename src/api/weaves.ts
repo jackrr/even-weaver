@@ -4,7 +4,7 @@ import { parseWeavePayload } from "@/models/weave";
 import { authenticate } from "./auth";
 
 const { Weave } = DB;
-async function loadUserWeave(req: Bun.BunRequest<"/weaves/:id">) {
+async function loadUserWeave(req: Bun.BunRequest<"/api/weaves/:id">) {
   const user = await authenticate(req);
   const weaveId = req.params.id;
 
@@ -24,7 +24,7 @@ async function loadUserWeave(req: Bun.BunRequest<"/weaves/:id">) {
   return weave;
 }
 
-export async function getWeave(req: Bun.BunRequest<"/weaves/:id">) {
+export async function getWeave(req: Bun.BunRequest<"/api/weaves/:id">) {
   try {
     const weave = await loadUserWeave(req);
     return Response.json(weave.serialize());
@@ -33,7 +33,7 @@ export async function getWeave(req: Bun.BunRequest<"/weaves/:id">) {
   }
 }
 
-export async function updateWeave(req: Bun.BunRequest<"/weaves/:id">) {
+export async function updateWeave(req: Bun.BunRequest<"/api/weaves/:id">) {
   try {
     const weave = await loadUserWeave(req);
     const json = await req.json();
@@ -47,7 +47,7 @@ export async function updateWeave(req: Bun.BunRequest<"/weaves/:id">) {
   }
 }
 
-export async function deleteWeave(req: Bun.BunRequest<"/weaves/:id">) {
+export async function deleteWeave(req: Bun.BunRequest<"/api/weaves/:id">) {
   try {
     const weave = await loadUserWeave(req);
     await weave.destroy();
@@ -57,7 +57,7 @@ export async function deleteWeave(req: Bun.BunRequest<"/weaves/:id">) {
   }
 }
 
-export async function getUserWeaves(req: Bun.BunRequest<"/weaves">) {
+export async function getUserWeaves(req: Bun.BunRequest<"/api/weaves">) {
   try {
     const user = await authenticate(req);
     const weaves = await Weave.findAll({ where: { userId: user.id } });
@@ -67,7 +67,7 @@ export async function getUserWeaves(req: Bun.BunRequest<"/weaves">) {
   }
 }
 
-export async function createWeave(req: Bun.BunRequest<"/weaves">) {
+export async function createWeave(req: Bun.BunRequest<"/api/weaves">) {
   try {
     const user = await authenticate(req);
     const json = await req.json();

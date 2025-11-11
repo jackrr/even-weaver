@@ -42,14 +42,13 @@ Basically just generating the file for the timestamped name... everything else i
 - Tap toggle completion
 - Opacity for completion feedback
 
-### Project creation
+### Bugs
 
-- Preview of generated image
-- Persistence
+- Some images (maybe vertical?) do not generate properly
 
 ### Polish
 
 - Auth pages (login + sign-up)
-- Nav bar (logout, username, site title, current context)
+- Header (logout, username, site title)
 - Create project form
 - Project list page

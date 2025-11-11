@@ -31,17 +31,17 @@ export const server = serve({
       POST: createUser,
     },
 
-    "/weaves/:id": {
+    "/api/weaves/:id": {
       GET: getWeave,
       PUT: updateWeave,
       DELETE: deleteWeave,
     },
-    "/weaves": {
+    "/api/weaves": {
       GET: getUserWeaves,
       POST: createWeave,
     },
 
-    "/colors": {
+    "/api/colors": {
       GET: getColors,
     },
   },

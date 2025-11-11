@@ -45,6 +45,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   );
 }
 
+export function useAuthContext() {
+  return useContext(AuthContext);
+}
+
 export function useReverifyAuth() {
   const { reverify } = useContext(AuthContext);
   return reverify;
