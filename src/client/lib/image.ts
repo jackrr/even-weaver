@@ -1,7 +1,8 @@
 import { type Color as ColorResponseType } from "./api";
-import { type Pattern } from "@/models/weave";
+import { Pattern } from "@/util/pattern";
 import Color from "@/util/color";
 
+// FIXME: Adjust to new pattern structure
 export function imageToPattern(
   file: File,
   colors: ColorResponseType[],

@@ -1,25 +1,13 @@
-import { useQuery } from "@tanstack/react-query";
+import { useColorMap } from "@/client/lib/colors";
+// FIXME: use new pattern structure
 import { type Pattern } from "@/models/weave";
-import { fetchColors, type Color } from "../lib/api";
 
 type Props = {
   pattern: Pattern;
 };
 
 export default function PatternPreview({ pattern }: Props) {
-  const { data: colors } = useQuery({
-    queryKey: ["colors"],
-    queryFn: fetchColors,
-    staleTime: "static",
-    select: (colors) => {
-      const colorMap: { [id: number]: Color } = {};
-      return colors.reduce((colorMap, color) => {
-        colorMap[color.id] = color;
-        return colorMap;
-      }, colorMap);
-    },
-  });
-
+  const colors = useColorMap();
   const height = Object.keys(pattern).length;
   const width = Object.keys(pattern[0]).length;
   const STITCH_SIZE = 5;

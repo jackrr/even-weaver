@@ -21,6 +21,13 @@ type ServerWeave = Weave & {
   pattern: string;
 };
 
+function deserializeWeave(weave: ServerWeave): Weave {
+  return {
+    ...weave,
+    pattern: JSON.parse(weave.pattern),
+  };
+}
+
 export async function fetchColors() {
   const res = await fetch("/api/colors");
   return res.json() as Promise<Color[]>;
@@ -43,17 +50,24 @@ export async function createWeave({
 export async function fetchWeaves(): Promise<Weave[]> {
   const res = await fetch("/api/weaves");
   const weavesIsh = await res.json();
-  return weavesIsh.map((weave: ServerWeave) => ({
-    ...weave,
-    pattern: JSON.parse(weave.pattern),
-  }));
+  return weavesIsh.map(deserializeWeave);
 }
 
 export async function fetchWeave(id: string): Promise<Weave> {
   const res = await fetch(`/api/weaves/${id}`);
   const weave = await res.json();
-  return {
-    ...weave,
-    pattern: JSON.parse(weave.pattern),
-  };
+  return deserializeWeave(weave);
+}
+
+export async function updateWeave(id: string, name: string, pattern: Pattern) {
+  const res = await fetch(`/api/weaves/${id}`, {
+    method: "put",
+    body: JSON.stringify({
+      name,
+      pattern: JSON.stringify(pattern),
+    }),
+  });
+
+  const weave = await res.json();
+  return deserializeWeave(weave);
 }

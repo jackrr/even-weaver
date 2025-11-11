@@ -61,6 +61,7 @@ function findCellsDumb(
   return cells;
 }
 
+// FIXME: use new pattern structure
 export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
   const { data, info } = await sharp(imagePath)
     .raw()
@@ -105,6 +106,7 @@ export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
   return output;
 }
 
+// FIXME: use new pattern structure
 export async function patternFromImage(
   image: ArrayBuffer,
   width: number,

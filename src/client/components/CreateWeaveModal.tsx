@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentProps } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+// FIXME: use new pattern structure
 import { type Pattern } from "@/models/weave";
 import Modal from "./Modal";
 import PatternPreview from "./PatternPreview";

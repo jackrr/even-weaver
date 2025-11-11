@@ -30,17 +30,19 @@ Basically just generating the file for the timestamped name... everything else i
 
 ## Roadmap
 
-### Navigation
-
-- Homepage lists current user's projects
+- Finish pattern structure refactor!
 
 ### Project view
 
-- Client side nav of project with drag interactions
-- Global menu
-- Color and symbol key
-- Tap toggle completion
-- Opacity for completion feedback
+- Clicking a cell toggles completion
+- Click and hold or drag will pan the screen
+- Opacity is lighter if completed
+- Shift (or toggle to complete mode) + Click and drag marks selected rect complete
+- Long press and double click/tap on cell trigger info popup
+- Global floating/pinned menu
+	- Pan mode vs completion mode
+	- Toggle color vs symbol mode
+	- Expandable key of colors + symbols
 
 ### Bugs
 
@@ -49,6 +51,10 @@ Basically just generating the file for the timestamped name... everything else i
 ### Polish
 
 - Auth pages (login + sign-up)
+  - Enter/return in inputs should submit form
+  - Visual feedback on invalid credentials/create failure
 - Header (logout, username, site title)
+  - Make this somehow hidden but accessible on project detail page
 - Create project form
 - Project list page
+

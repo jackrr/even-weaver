@@ -35,15 +35,6 @@ class Weave extends Model<
   }
 }
 
-export type Pattern = {
-  [y: number]: {
-    [x: number]: {
-      c: number;
-      s: "todo" | "done";
-    };
-  };
-};
-
 export type WeavePayload = {
   name: string;
   pattern: Buffer;
