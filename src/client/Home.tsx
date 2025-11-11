@@ -1,14 +1,19 @@
 import Button from "./components/Button";
-import { useAuthWall } from "./auth";
+import CreateProjectModal from "./components/CreateProjectModal";
+import { useState } from "react";
 
 export default function Home() {
-  useAuthWall();
+  const [creatingProject, setCreatingProject] = useState(false);
 
   return (
     <>
       <h1>Home</h1>
       <a href="/logout">Log Out</a>
-      <Button onClick={() => createProject()}>New Project</Button>
+      <Button onClick={() => setCreatingProject(true)}>New Project</Button>
+      <CreateProjectModal
+        open={creatingProject}
+        toggleOpen={setCreatingProject}
+      />
     </>
   );
 }

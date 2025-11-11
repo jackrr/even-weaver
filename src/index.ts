@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import index from "./index.html";
 import { login, logout, createUser, isLoggedIn } from "./api/auth";
+import { getColors } from "./api/colors";
 import {
   getWeave,
   updateWeave,
@@ -38,6 +39,10 @@ export const server = serve({
     "/weaves": {
       GET: getUserWeaves,
       POST: createWeave,
+    },
+
+    "/colors": {
+      GET: getColors,
     },
   },
 

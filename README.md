@@ -37,8 +37,6 @@ Basically just generating the file for the timestamped name... everything else i
 ### Project view
 
 - Client side nav of project with drag interactions
-- API to fetch project state (return everything)
-- API to update state (require full state send)
 - Global menu
 - Color and symbol key
 - Tap toggle completion
@@ -46,7 +44,7 @@ Basically just generating the file for the timestamped name... everything else i
 
 ### Project creation
 
-- Client-side image uploading form submission
+- Client-side image uploading form submission (maybe resize image and generate payload in the client?)
 
 ### Polish
 

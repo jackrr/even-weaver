@@ -12,6 +12,7 @@
     "sql": "bunx sequelize-cli"
   },
   "dependencies": {
+    "@tanstack/react-query": "^5.90.7",
     "bun-plugin-tailwind": "^0.0.15",
     "date-fns": "^4.1.0",
     "react": "^19",
