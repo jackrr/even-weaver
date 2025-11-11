@@ -3,6 +3,7 @@ import type { ComponentProps } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { type Pattern } from "@/models/weave";
 import Modal from "./Modal";
+import PatternPreview from "./PatternPreview";
 import { fetchColors } from "../lib/api";
 import { imageToPattern } from "../lib/image";
 
@@ -31,7 +32,6 @@ export default function CreateProjectModal({ open, toggleOpen }: Props) {
     convertImage();
   }, [imagePath, width, height, setPattern, colors]);
 
-  // TODO: pattern visual preview
   // TODO: form submission to backend via button if name and pattern are established
   const nameRef = useRef<HTMLInputElement>(null);
   return (
@@ -57,6 +57,7 @@ export default function CreateProjectModal({ open, toggleOpen }: Props) {
           e.target.files?.length && setImagePath(e.target.files.item(0))
         }
       />
+      {pattern ? <PatternPreview pattern={pattern} /> : null}
     </Modal>
   );
 }
