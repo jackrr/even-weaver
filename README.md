@@ -34,19 +34,10 @@ Basically just generating the file for the timestamped name... everything else i
 
 ### Project view
 
-- Clicking a cell toggles completion
-- Click and hold or drag will pan the screen
-- Opacity is lighter if completed
-- Shift (or toggle to complete mode) + Click and drag marks selected rect complete
-- Long press and double click/tap on cell trigger info popup
-- Global floating/pinned menu
-	- Pan mode vs completion mode
-	- Toggle color vs symbol mode
-	- Expandable key of colors + symbols
-
 ### Bugs
 
 - Some images (maybe vertical?) do not generate properly
+- zoom should happen around interaction point
 
 ### Polish
 
@@ -58,3 +49,4 @@ Basically just generating the file for the timestamped name... everything else i
 - Create project form
 - Project list page
 - Make a favicon/logo
+

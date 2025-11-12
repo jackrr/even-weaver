@@ -11,7 +11,7 @@ export function App() {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
-        <div className="h-screen w-screen overflow-hidden relative">
+        <div className="flex flex-col h-screen w-screen overflow-hidden max-w-5xl p-4">
           <Header />
           <Routes />
         </div>

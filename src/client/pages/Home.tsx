@@ -4,6 +4,7 @@ import Button from "@/client/components/Button";
 import CreateWeaveModal from "@/client/components/CreateWeaveModal";
 import PatternPreview from "@/client/components/PatternPreview";
 import { fetchWeaves } from "@/client/lib/api";
+import { usePageTitle } from "@/client/lib/title";
 
 export default function Home() {
   const [creatingWeave, setCreatingWeave] = useState(false);
@@ -11,6 +12,8 @@ export default function Home() {
     queryKey: ["weaves"],
     queryFn: fetchWeaves,
   });
+
+  usePageTitle("Your Weaves");
 
   return (
     <>
