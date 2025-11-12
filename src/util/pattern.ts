@@ -1,55 +1,80 @@
 export type Status = "todo" | "done";
 
-class Cell {
+interface Stitch {
   c: number;
   s: Status;
+}
 
-  constructor(c: number, s: Status) {
-    this.c = c;
-    this.s = s;
-  }
-
-  isDone() {
-    return this.s === "done";
-  }
-
-  toggleDone() {
-    this.isDone() ? (this.s = "todo") : (this.s = "done");
-  }
+function toggleDone(s: Stitch) {
+  s.s = s.s === "done" ? "todo" : "done";
 }
 
 export class Pattern {
   width: number;
   height: number;
-  cells: Cell[];
+  stitches: Stitch[];
 
-  constructor(width: number, height: number, cells: Cell[]) {
+  constructor(width: number, height: number, stitches: Stitch[]) {
     this.width = width;
     this.height = height;
-    this.cells = cells;
+    this.stitches = stitches;
   }
 
-  getCell(x: number, y: number): Cell {
+  static empty(width: number, height: number) {
+    return new Pattern(
+      width,
+      height,
+      new Array(width * height).fill({ c: 0, s: "todo" }),
+    );
+  }
+
+  static deserialize(val: string) {
+    const res = JSON.parse(val);
+    if (!("width" in res) && typeof res.width !== "number")
+      throw new Error("Width should be a number");
+    if (!("height" in res) && typeof res.height !== "number")
+      throw new Error("Height should be a number");
+    if (!("stitches" in res && res.stitches.length !== res.width * res.length))
+      throw new Error("Stitches of incorrect length");
+
+    return new Pattern(res.width, res.height, res.stitches as Stitch[]);
+  }
+
+  serialize(): string {
+    return JSON.stringify({
+      width: this.width,
+      height: this.height,
+      stitches: this.stitches,
+    });
+  }
+
+  getStitch(x: number, y: number): Stitch {
     if (x >= this.width) throw new Error(`${x} is out of bounds!`);
     if (y >= this.height) throw new Error(`${y} is out of bounds!`);
-    return this.cells[y * this.width + x]!;
+    return this.stitches[y * this.width + x]!;
   }
 
-  toggleCell(x: number, y: number) {
-    this.getCell(x, y).toggleDone();
+  setStitch(x: number, y: number, s: Stitch) {
+    if (x >= this.width) throw new Error(`${x} is out of bounds!`);
+    if (y >= this.height) throw new Error(`${y} is out of bounds!`);
+    this.stitches[y * this.width + x] = s;
   }
 
-  mapCells<T>(cb: (d: { cell: Cell; x: number; y: number }) => T): T[] {
+  toggleStitch(x: number, y: number) {
+    toggleDone(this.getStitch(x, y));
+  }
+
+  mapStitches<T>(cb: (d: { stitch: Stitch; x: number; y: number }) => T): T[] {
     const result = [];
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        result.push(cb({ cell: this.getCell(x, y), x, y }));
+        result.push(cb({ stitch: this.getStitch(x, y), x, y }));
       }
     }
     return result;
   }
 
-  eachCell(cb: (d: { cell: Cell; x: number; y: number }) => void) {
-    this.mapCells(cb);
+  eachStitch(cb: (d: { stitch: Stitch; x: number; y: number }) => void) {
+    this.mapStitches(cb);
   }
 }

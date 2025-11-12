@@ -1,6 +1,5 @@
 import { useColorMap } from "@/client/lib/colors";
-// FIXME: use new pattern structure
-import { type Pattern } from "@/models/weave";
+import { Pattern } from "@/util/pattern";
 
 type Props = {
   pattern: Pattern;
@@ -8,8 +7,7 @@ type Props = {
 
 export default function PatternPreview({ pattern }: Props) {
   const colors = useColorMap();
-  const height = Object.keys(pattern).length;
-  const width = Object.keys(pattern[0]).length;
+  const { width, height } = pattern;
   const STITCH_SIZE = 5;
   const GAP = 1;
 
@@ -22,23 +20,19 @@ export default function PatternPreview({ pattern }: Props) {
         width: width * (STITCH_SIZE + GAP),
       }}
     >
-      {Object.entries(pattern).map(([y, row]) => (
-        <>
-          {Object.entries(row).map(([x, cell]) => {
-            const color = colors ? `#${colors[cell.c]?.hex}` : "";
-            return (
-              <div
-                style={{
-                  backgroundColor: color,
-                  width: STITCH_SIZE,
-                  height: STITCH_SIZE,
-                }}
-                key={`cell-${y}-${x}`}
-              />
-            );
-          })}
-        </>
-      ))}
+      {pattern.mapStitches(({ stitch, x, y }) => {
+        const color = colors ? `#${colors[stitch.c]?.hex}` : "";
+        return (
+          <div
+            style={{
+              backgroundColor: color,
+              width: STITCH_SIZE,
+              height: STITCH_SIZE,
+            }}
+            key={`cell-${y}-${x}`}
+          />
+        );
+      })}
     </div>
   );
 }

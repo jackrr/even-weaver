@@ -1,4 +1,4 @@
-import { type Pattern } from "@/models/weave";
+import { Pattern } from "@/util/pattern";
 
 export type Color = {
   id: number;
@@ -24,7 +24,7 @@ type ServerWeave = Weave & {
 function deserializeWeave(weave: ServerWeave): Weave {
   return {
     ...weave,
-    pattern: JSON.parse(weave.pattern),
+    pattern: Pattern.deserialize(weave.pattern),
   };
 }
 
@@ -38,11 +38,11 @@ export async function createWeave({
   pattern,
 }: {
   name: string;
-  pattern: object;
+  pattern: Pattern;
 }) {
   const res = await fetch("/api/weaves", {
     method: "post",
-    body: JSON.stringify({ name, pattern: JSON.stringify(pattern) }),
+    body: JSON.stringify({ name, pattern: pattern.serialize() }),
   });
   return res.json() as Promise<Weave>;
 }
@@ -64,7 +64,7 @@ export async function updateWeave(id: string, name: string, pattern: Pattern) {
     method: "put",
     body: JSON.stringify({
       name,
-      pattern: JSON.stringify(pattern),
+      pattern: pattern.serialize(),
     }),
   });
 

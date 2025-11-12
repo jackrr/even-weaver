@@ -2,7 +2,6 @@ import { type Color as ColorResponseType } from "./api";
 import { Pattern } from "@/util/pattern";
 import Color from "@/util/color";
 
-// FIXME: Adjust to new pattern structure
 export function imageToPattern(
   file: File,
   colors: ColorResponseType[],
@@ -32,6 +31,8 @@ export function imageToPattern(
           height = maxHeight;
         }
       }
+      width = Math.round(width);
+      height = Math.round(height);
 
       canvas.width = width;
       canvas.height = height;
@@ -41,7 +42,7 @@ export function imageToPattern(
       const pixels = imageData.data; // Uint8ClampedArray
       const PIXEL_SIZE = 4;
 
-      const output: Pattern = {};
+      const pattern = Pattern.empty(width, height);
       const colorCache: { [colorString: string]: number } = {};
 
       for (let y = 0; y < height; y++) {
@@ -52,7 +53,6 @@ export function imageToPattern(
             pixels[offset + 1] as number,
             pixels[offset + 2] as number,
           );
-          if (!output[y]) output[y] = {};
 
           let colorId = colorCache[color.toString()];
           if (!colorId) {
@@ -70,14 +70,11 @@ export function imageToPattern(
             colorCache[color.toString()] = colorId;
           }
 
-          output[y][x] = {
-            c: colorId,
-            s: "todo",
-          };
+          pattern.setStitch(x, y, { c: colorId, s: "todo" });
         }
       }
 
-      resolve(output);
+      resolve(pattern);
     };
 
     img.src = URL.createObjectURL(file);

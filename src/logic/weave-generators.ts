@@ -1,10 +1,10 @@
 import sharp from "sharp";
-import type { Pattern } from "../models/weave";
+import { Pattern } from "@/util/pattern";
 import Color from "../util/color";
 import Coord from "../util/coord";
 import db from "../models/index";
 
-type Cell = {
+type GridCell = {
   color: Color;
   center: Coord;
   gridPos: Coord;
@@ -29,7 +29,7 @@ function findCellsDumb(
     );
   }
 
-  const cells: Cell[] = [];
+  const cells: GridCell[] = [];
   const X_START_OFFSET = 7;
   const X_SKIP = 15.2;
   const Y_START_OFFSET = 7;
@@ -41,47 +41,43 @@ function findCellsDumb(
   let gridY = 0;
 
   while (y < height) {
+    gridX = 0;
+
     while (x < width) {
       const center = new Coord(Math.round(x), Math.round(y));
       cells.push({
         center,
         color: colorAt(center),
-        gridPos: new Coord(x, y),
+        gridPos: new Coord(gridX, gridY),
       });
       x += X_SKIP;
       gridX += 1;
     }
 
     x = X_START_OFFSET;
-    gridX = 0;
     y += Y_SKIP;
     gridY += 1;
   }
 
-  return cells;
+  return { cells, width: gridX, height: gridY };
 }
 
-// FIXME: use new pattern structure
 export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
   const { data, info } = await sharp(imagePath)
     .raw()
     .toBuffer({ resolveWithObject: true });
-  const { width, height } = info;
+  const { width: srcWidth, height: srcHeight } = info;
   const pixels = new Uint8ClampedArray(data.buffer);
 
-  const cells = findCellsDumb(pixels, width, height);
+  const { cells, width, height } = findCellsDumb(pixels, srcWidth, srcHeight);
 
   const colors = await db.Color.findAll();
   if (colors.length === 0)
     throw new Error("Expected at least 1 color in the DB");
 
-  const output: Pattern = {};
+  const pattern = Pattern.empty(width, height);
   const colorCache: { [colorString: string]: number } = {};
   for (const cell of cells) {
-    const { x, y } = cell.center;
-
-    if (!output[y]) output[y] = {};
-
     let colorId = colorCache[cell.color.toString()];
     if (!colorId) {
       colorId = colors[0]!.id as number;
@@ -97,16 +93,13 @@ export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
       colorCache[cell.color.toString()] = colorId;
     }
 
-    output[y][x] = {
-      c: colorId,
-      s: "todo",
-    };
+    const { x, y } = cell.gridPos;
+    pattern.setStitch(x, y, { c: colorId, s: "todo" });
   }
 
-  return output;
+  return pattern;
 }
 
-// FIXME: use new pattern structure
 export async function patternFromImage(
   image: ArrayBuffer,
   width: number,
@@ -123,7 +116,7 @@ export async function patternFromImage(
   if (colors.length === 0)
     throw new Error("Expected at least 1 color in the DB");
 
-  const output: Pattern = {};
+  const pattern = Pattern.empty(width, height);
   const colorCache: { [colorString: string]: number } = {};
 
   for (let y = 0; y < height; y++) {
@@ -134,8 +127,6 @@ export async function patternFromImage(
         pixels[offset + 1] as number,
         pixels[offset + 2] as number,
       );
-
-      if (!output[y]) output[y] = {};
 
       let colorId = colorCache[color.toString()];
       if (!colorId) {
@@ -153,12 +144,9 @@ export async function patternFromImage(
         colorCache[color.toString()] = colorId;
       }
 
-      output[y][x] = {
-        c: colorId,
-        s: "todo",
-      };
+      pattern.setStitch(x, y, { c: colorId, s: "todo" });
     }
   }
 
-  return output;
+  return pattern;
 }

@@ -13,10 +13,7 @@ describe("png grid input", () => {
       path.resolve("sample-images", "heaven-or-las-vegas-pregen.png"),
     );
 
-    expect(Object.keys(pattern).length).toBe(140);
-    for (const row of Object.values(pattern)) {
-      expect(Object.keys(row).length).toBe(140);
-    }
+    expect(pattern.stitches).toBeArrayOfSize(140 * 140);
   });
 });
 
@@ -32,12 +29,7 @@ describe("jpeg image input", () => {
     //   .resize(width, height)
     //   .toFile(path.resolve("tmp", "resized.jpg"));
     const pattern = await patternFromImage(buffer, width, height);
-
-    expect(Object.keys(pattern).length).toBe(height);
-    for (const row of Object.values(pattern)) {
-      expect(Object.keys(row).length).toBe(width);
-    }
-
+    expect(pattern.stitches).toBeArrayOfSize(width * height);
     // Debug stuff
     // const drawing = new Drawing();
     // for (const [y, row] of Object.entries(pattern)) {

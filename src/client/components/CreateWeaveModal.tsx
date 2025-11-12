@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { ComponentProps } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-// FIXME: use new pattern structure
-import { type Pattern } from "@/models/weave";
+import { Pattern } from "@/util/pattern";
 import Modal from "./Modal";
 import PatternPreview from "./PatternPreview";
 import { fetchColors, createWeave } from "../lib/api";
@@ -49,7 +48,6 @@ export default function CreateWeaveModal({ open, toggleOpen }: Props) {
     create({ name: nameRef.current?.value, pattern });
   }
 
-  // TODO: form submission to backend via button if name and pattern are established
   const nameRef = useRef<HTMLInputElement>(null);
   return (
     <Modal open={open} toggleOpen={toggleOpen}>
