@@ -57,4 +57,4 @@ Basically just generating the file for the timestamped name... everything else i
   - Make this somehow hidden but accessible on project detail page
 - Create project form
 - Project list page
-
+- Make a favicon/logo

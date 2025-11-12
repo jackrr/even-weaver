@@ -12,7 +12,6 @@ import {
 
 export const server = serve({
   routes: {
-    // Serve index.html for all unmatched routes.
     "/*": index,
 
     "/logged-in": {
@@ -46,13 +45,7 @@ export const server = serve({
     },
   },
 
-  development: process.env.NODE_ENV === "development" && {
-    // Enable browser hot reloading in development
-    hmr: true,
-
-    // Echo console logs from the browser to the server
-    console: true,
-  },
+  development: !process.env.NODE_ENV || process.env.NODE_ENV === "development",
 });
 
 console.log(`🚀 Server running at ${server.url}`);

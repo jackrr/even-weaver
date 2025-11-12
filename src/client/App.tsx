@@ -11,8 +11,10 @@ export function App() {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
-        <Header />
-        <Routes />
+        <div className="h-screen w-screen overflow-hidden relative">
+          <Header />
+          <Routes />
+        </div>
       </AuthProvider>
     </QueryClientProvider>
   );
