@@ -28,6 +28,19 @@ Basically just generating the file for the timestamped name... everything else i
 `bun sql model:generate` # migration file and new model file
 `bun sql migration:generate` # just a migration file
 
+## Deploying
+
+Build the docker image:
+```bash
+docker build . -t jackratner/even-weaver
+```
+
+(Optional) Run the image locally to verify:
+
+```bash
+docker run -v ./tmp/:/usr/src/app/tmp/ --network host jackratner/even-weaver
+```
+
 ## Roadmap
 
 - Finish pattern structure refactor!
