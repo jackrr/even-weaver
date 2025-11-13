@@ -6,6 +6,4 @@ await Bun.build({
   outdir: "dist",
   entrypoints: ["src/index.ts"],
   target: "bun",
-  // sourcemap: "linked",
-  // minify: true,
 });

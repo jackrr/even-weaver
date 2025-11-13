@@ -5,10 +5,9 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot run src/index.ts",
-    "serve_prod": "NODE_ENV=production bun sql db:migrate && NODE_ENV=production bun run src/index.ts",
+    "serve_prod": "NODE_ENV=production bun run src/scripts/migrate.ts && NODE_ENV=production bun run src/index.ts",
     "serve": "bun run src/index.ts",
-    "format": "bun run prettier --write .",
-    "sql": "bunx sequelize-cli"
+    "format": "bun run prettier --write ."
   },
   "dependencies": {
     "@tanstack/react-query": "^5.90.7",
@@ -17,10 +16,11 @@
     "react": "^19",
     "react-dom": "^19",
     "sequelize": "^6.37.7",
-		"sequelize-cli": "^6.6.3",
+    "sequelize-cli": "^6.6.3",
     "sharp": "^0.34.5",
     "sqlite3": "^5.1.7",
-    "tailwindcss": "^4.1.11"
+    "tailwindcss": "^4.1.11",
+    "umzug": "^3.8.2"
   },
   "devDependencies": {
     "@types/bun": "latest",

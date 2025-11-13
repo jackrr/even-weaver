@@ -11,28 +11,17 @@ A tool for cross stitchers.
 1. Install [bun](https://bun.com/)
 1. Clone this repo
 1. Install dependencies: `bun install`
-1. Bootstrap the db
-   1. Run migrations: `bun sql db:migrate`
-   1. Seeds: `bun sql db:seed:all`
+1. Bootstrap the db: `bun run src/scripts/migrate.ts`
 
 ### Running
 
 1. Run the dev server: `bun dev`
 
-### Updating data models
-
-Note: this kinda sucks, because the generated migration and model files are JavaScript, not TypeScript.
-
-Basically just generating the file for the timestamped name... everything else is copy-pasted from prior migrations and entities.
-
-`bun sql model:generate` # migration file and new model file
-`bun sql migration:generate` # just a migration file
-
 ## Deploying
 
 Build the docker image:
 ```bash
-docker build . -t jackratner/even-weaver
+docker buildx build --platform linux/amd64,linux/arm64 -t jackratner/even-weaver --push . 
 ```
 
 (Optional) Run the image locally to verify:
@@ -42,10 +31,6 @@ docker run -v ./tmp/:/usr/src/app/tmp/ --network host jackratner/even-weaver
 ```
 
 ## Roadmap
-
-- Finish pattern structure refactor!
-
-### Project view
 
 ### Bugs
 
