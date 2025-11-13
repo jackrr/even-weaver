@@ -5,8 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "bun --hot run src/index.ts",
-    "start": "NODE_ENV=production bun sql db:migrate && NODE_ENV=production bun run src/index.ts",
-    "build": "bun run build.ts",
+    "docker_start": "NODE_ENV=production bun sql db:migrate && NODE_ENV=production bun run index.js",
     "serve": "bun run src/index.ts",
     "format": "bun run prettier --write .",
     "sql": "bunx sequelize-cli"

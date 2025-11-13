@@ -10,8 +10,6 @@ import {
   createWeave,
 } from "./api/weaves";
 
-// FIXME! Dockerfile doesn't serve in prod
-
 export const server = serve({
   routes: {
     "/*": index,

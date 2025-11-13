@@ -22,7 +22,7 @@ COPY . .
 
 ENV NODE_ENV=production
 RUN bun test
-RUN bun run build
+RUN bun run build.ts
 
 # copy production dependencies and source code into final image
 FROM base AS release
@@ -33,9 +33,9 @@ COPY --from=prerelease /usr/src/app/.sequelizerc .
 COPY --from=prerelease /usr/src/app/tsconfig.json .
 COPY --from=prerelease /usr/src/app/bunfig.toml .
 COPY --from=prerelease /usr/src/app/src ./src/
-COPY --from=prerelease /usr/src/app/dist ./dist/
+COPY --from=prerelease /usr/src/app/dist ./
 
 # run the app
 USER bun
 EXPOSE 3000/tcp
-CMD [ "bun", "start" ]
+CMD [ "bun", "docker_start"]
