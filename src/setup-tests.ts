@@ -1,19 +1,16 @@
 import { afterAll, beforeAll, beforeEach } from "bun:test";
-import Sequelize from "sequelize";
+import db from "@/models/index";
+import umzug from "@/umzug";
 import { server } from "./index";
-import db from "./models/index";
-import seedColors from "./seeders/colors";
 
 beforeAll(async () => {
-  await db.sequelize.sync({ force: true });
-  await seedColors.up(db.sequelize.getQueryInterface(), Sequelize);
+  await umzug.up();
 });
 
 beforeEach(async () => {
   // Drop all model tables except colors
   const { sequelize } = db;
-  const tables = await sequelize.getQueryInterface().showAllTables();
-  const tablesToEmpty = tables.filter((table) => table !== "color");
+  const tablesToEmpty = ["weave", "auth_token", "user"];
 
   for (const table of tablesToEmpty) {
     try {
