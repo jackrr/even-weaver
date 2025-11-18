@@ -26,6 +26,7 @@
     "@types/bun": "latest",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "eruda": "^3.4.3",
     "prettier": "^3.6.2",
     "react-router": "^7.9.5",
     "reflect-metadata": "^0.2.2",
