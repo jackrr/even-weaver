@@ -17,7 +17,7 @@ const BASE_STITCH = 4;
 const BASE_GAP = 1;
 const MIN_ZOOM = 1;
 const DEFAULT_ZOOM = 4;
-const MAX_ZOOM = 100;
+const MAX_ZOOM = 20;
 
 export default function Weave() {
   const { id } = useParams();
@@ -48,6 +48,10 @@ export default function Weave() {
     (setter: (prev: number) => number) => {
       setZoomInternal((prev) => {
         const next = setter(prev);
+        // TODO: Zoom around center
+        // get current "center"
+        // calc new center
+        // scroll to new center
         if (next < MIN_ZOOM) return MIN_ZOOM;
         if (next > MAX_ZOOM) return MAX_ZOOM;
 
@@ -59,13 +63,15 @@ export default function Weave() {
 
   const gridRef = useRef<HTMLDivElement>(null);
   const lastDragCoord = useRef<[number, number]>(null);
-
-  const onDragMove: DragEventHandler<HTMLDivElement> = useCallback((e) => {
+  const panStart = useCallback((x: number, y: number) => {
+    lastDragCoord.current = [x, y];
+  }, []);
+  const panNext = useCallback((newX: number, newY: number) => {
     if (!lastDragCoord.current) return;
     if (!gridRef.current) return;
 
     const [prevX, prevY] = lastDragCoord.current;
-    const { clientX: newX, clientY: newY } = e;
+
     const dx = prevX - newX;
     const dy = prevY - newY;
 
@@ -74,7 +80,8 @@ export default function Weave() {
   }, []);
 
   const onDragStart: DragEventHandler<HTMLDivElement> = useCallback((e) => {
-    lastDragCoord.current = [e.clientX, e.clientY];
+    panStart(e.clientX, e.clientY);
+
     // Prevent "ghost" image
     const img = new Image();
     img.src =
@@ -83,6 +90,55 @@ export default function Weave() {
   }, []);
 
   const onDragEnd: DragEventHandler<HTMLDivElement> = useCallback(() => {
+    lastDragCoord.current = null;
+  }, []);
+
+  const scaleDist = useRef<number>(null);
+  const pinchDist = useCallback((e: TouchEvent<HTMLDivElement>) => {
+    if (e.touches.length !== 2) return null;
+    const x0 = e.touches[0]!.pageX;
+    const y0 = e.touches[0]!.pageY;
+    const x1 = e.touches[1]!.pageX;
+    const y1 = e.touches[1]!.pageY;
+
+    return Math.hypot(x0 - x1, y0 - y1);
+  }, []);
+
+  const onTouchStart: TouchEventHandler<HTMLDivElement> = useCallback(
+    (e) => {
+      if (e.touches.length === 1) {
+        lastDragCoord.current = [e.touches[0]!.clientX, e.touches[0]!.clientY];
+        return;
+      }
+
+      const dist = pinchDist(e);
+      scaleDist.current = dist;
+    },
+    [pinchDist],
+  );
+
+  const onTouchMove: TouchEventHandler<HTMLDivElement> = useCallback(
+    (e) => {
+      if (e.touches.length === 1) {
+        panNext(e.touches[0]!.clientX, e.touches[0]!.clientY);
+        return;
+      }
+
+      const dist = pinchDist(e);
+      if (!dist) return;
+
+      if (scaleDist.current) {
+        const mag = (dist - scaleDist.current) / 5;
+        setZoom((zoom) => zoom + mag);
+      }
+
+      scaleDist.current = dist;
+    },
+    [pinchDist, setZoom],
+  );
+
+  const onTouchEnd: TouchEventHandler<HTMLDivElement> = useCallback(() => {
+    scaleDist.current = null;
     lastDragCoord.current = null;
   }, []);
 
@@ -103,47 +159,6 @@ export default function Weave() {
     [setZoom],
   );
 
-  const scaleDist = useRef<number>(null);
-  const pinchDist = useCallback((e: TouchEvent<HTMLDivElement>) => {
-    if (e.touches.length !== 2) return null;
-    const x0 = e.touches[0]!.pageX;
-    const y0 = e.touches[0]!.pageY;
-    const x1 = e.touches[1]!.pageX;
-    const y1 = e.touches[1]!.pageY;
-
-    return Math.hypot(x0 - x1, y0 - y1);
-  }, []);
-  const onTouchStart: TouchEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
-      // TODO: panning support
-      const dist = pinchDist(e);
-      console.log("PINCH START", dist, scaleDist.current);
-      scaleDist.current = dist;
-    },
-    [pinchDist],
-  );
-
-  const onTouchMove: TouchEventHandler<HTMLDivElement> = useCallback(
-    (e) => {
-      // TODO: panning suppport
-      const dist = pinchDist(e);
-      console.log("PINCH", dist, scaleDist.current);
-      if (!dist) return;
-
-      if (scaleDist.current) {
-        const mag = (dist - scaleDist.current) / 5;
-        setZoom((z) => z + mag);
-      }
-
-      scaleDist.current = dist;
-    },
-    [pinchDist, setZoom],
-  );
-
-  const onTouchEnd: TouchEventHandler<HTMLDivElement> = useCallback((e) => {
-    scaleDist.current = null;
-  }, []);
-
   if (!weave) return null;
 
   const { pattern, name } = weave;
@@ -151,8 +166,6 @@ export default function Weave() {
   const STITCH_SIZE = BASE_STITCH * zoom;
   const GAP = BASE_GAP * zoom;
 
-  // FIXME: pan on mobile
-  // FIXME: zoom should happen around interaction point
   // TODO: long press cell trigger info popup
   // TODO: global summary (color mapping to names with totals, % complete) - can show in modal
   return (
@@ -160,7 +173,7 @@ export default function Weave() {
       <h2>{name}</h2>
       <div
         className={`bg-gray-600 overflow-hidden grow`}
-        onDragOver={onDragMove}
+        onDragOver={(e) => panNext(e.clientX, e.clientY)}
         ref={gridRef}
         onDoubleClick={() => setZoom((zoom) => zoom * 2)}
       >
