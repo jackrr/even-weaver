@@ -1,9 +1,3 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router";
-import { clamp } from "@/util/math";
-import { fetchWeave, updateWeave } from "@/client/lib/api";
-import { useColorMap } from "@/client/lib/colors";
-import { usePageTitle } from "@/client/lib/title";
 import {
   useCallback,
   useRef,
@@ -13,6 +7,13 @@ import {
   type TouchEventHandler,
   type WheelEventHandler,
 } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useParams } from "react-router";
+import { clamp } from "@/util/math";
+import { fetchWeave, updateWeave } from "@/client/lib/api";
+import { useColorMap } from "@/client/lib/colors";
+import { useDebounce } from "@/client/lib/debounce";
+import { usePageTitle } from "@/client/lib/title";
 
 const BASE_STITCH = 4;
 const BASE_GAP = 1;
@@ -30,6 +31,7 @@ export default function Weave() {
     enabled: !!id,
   });
 
+  const debounce = useDebounce(1000);
   const { mutate: toggleCellCompletion } = useMutation({
     mutationFn: async ({ x, y }: { x: number; y: number }) => {
       if (!id) return;
@@ -37,8 +39,10 @@ export default function Weave() {
       return updateWeave(id, name, pattern);
     },
     onSuccess: () => {
-      // FIXME: race condition on multiple writes (maybe debounce this?)
-      queryClient.invalidateQueries({ queryKey: ["weave", id] });
+      // Use a debounce to prevent race condition from causing "blink" of checkboxes
+      debounce(() => {
+        queryClient.invalidateQueries({ queryKey: ["weave", id] });
+      });
     },
   });
 
@@ -228,6 +232,7 @@ export default function Weave() {
                     className=" text-gray-100 bg-black opacity-40 w-full h-full"
                     style={{
                       fontSize: STITCH_SIZE,
+                      paddingLeft: STITCH_SIZE / 16,
                       lineHeight: "100%",
                     }}
                   >
