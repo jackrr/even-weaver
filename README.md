@@ -32,7 +32,6 @@ docker run -v ./tmp/:/usr/src/app/tmp/ --network host jackratner/even-weaver
 
 ## Roadmap
 
-- Persist cookie to local storage for long-lived login
 - Verify that generated cocteau twins color pallet matches Anna's project
 
 ### Bugs
