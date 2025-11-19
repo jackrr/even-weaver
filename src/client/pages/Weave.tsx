@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
+import { clamp } from "@/util/math";
 import { fetchWeave, updateWeave } from "@/client/lib/api";
 import { useColorMap } from "@/client/lib/colors";
 import { usePageTitle } from "@/client/lib/title";
@@ -42,26 +43,40 @@ export default function Weave() {
   });
 
   usePageTitle(weave?.name);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   const [zoom, setZoomInternal] = useState(DEFAULT_ZOOM);
   const setZoom = useCallback(
     (setter: (prev: number) => number) => {
       setZoomInternal((prev) => {
-        const next = setter(prev);
-        // TODO: Zoom around center
-        // get current "center"
-        // calc new center
-        // scroll to new center
-        if (next < MIN_ZOOM) return MIN_ZOOM;
-        if (next > MAX_ZOOM) return MAX_ZOOM;
+        let next = setter(prev);
+        next = clamp(next, MIN_ZOOM, MAX_ZOOM);
+        if (!weave || !gridRef.current) return next;
+
+        // Zoom around "center"
+        const {
+          clientWidth: width,
+          clientHeight: height,
+          scrollTop,
+          scrollLeft,
+        } = gridRef.current;
+        const zoomRatio = next / prev;
+
+        const centerX = scrollLeft + width / 2;
+        const centerY = scrollTop + height / 2;
+        const newCenterX = centerX * zoomRatio;
+        const newCenterY = centerY * zoomRatio;
+        const newScrollX = newCenterX - width / 2;
+        const newScrollY = newCenterY - height / 2;
+
+        gridRef.current.scrollTo(newScrollX, newScrollY);
 
         return next;
       });
     },
-    [setZoomInternal],
+    [setZoomInternal, weave],
   );
 
-  const gridRef = useRef<HTMLDivElement>(null);
   const lastDragCoord = useRef<[number, number]>(null);
   const panStart = useCallback((x: number, y: number) => {
     lastDragCoord.current = [x, y];
@@ -144,13 +159,14 @@ export default function Weave() {
 
   const onMouseWheel: WheelEventHandler<HTMLDivElement> = useCallback(
     (e) => {
+      const WHEEL_INTERVAL = 1;
       if (!gridRef.current) return;
       if (e.shiftKey) {
         // zoom
         e.preventDefault();
         e.stopPropagation();
-        if (e.deltaY > 0) setZoom((zoom) => zoom / 2);
-        if (e.deltaY < 0) setZoom((zoom) => zoom * 2);
+        if (e.deltaY > 0) setZoom((zoom) => (zoom -= WHEEL_INTERVAL));
+        if (e.deltaY < 0) setZoom((zoom) => (zoom += WHEEL_INTERVAL));
       } else {
         // pan it
         gridRef.current.scrollBy(e.deltaX, e.deltaY);
