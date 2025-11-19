@@ -32,10 +32,12 @@ docker run -v ./tmp/:/usr/src/app/tmp/ --network host jackratner/even-weaver
 
 ## Roadmap
 
+- Persist cookie to local storage for long-lived login
+- Verify that generated cocteau twins color pallet matches Anna's project
+
 ### Bugs
 
 - Some images (maybe vertical?) do not generate properly
-- zoom should happen around interaction point
 
 ### Polish
 

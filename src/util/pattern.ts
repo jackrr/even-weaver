@@ -64,17 +64,23 @@ export class Pattern {
     toggleDone(this.getStitch(x, y));
   }
 
-  mapStitches<T>(cb: (d: { stitch: Stitch; x: number; y: number }) => T): T[] {
+  mapStitches<T>(
+    cb: (d: { stitch: Stitch; x: number; y: number; index: number }) => T,
+  ): T[] {
     const result = [];
+    let index = 0;
     for (let y = 0; y < this.height; y++) {
       for (let x = 0; x < this.width; x++) {
-        result.push(cb({ stitch: this.getStitch(x, y), x, y }));
+        result.push(cb({ stitch: this.getStitch(x, y), x, y, index }));
+        index += 1;
       }
     }
     return result;
   }
 
-  eachStitch(cb: (d: { stitch: Stitch; x: number; y: number }) => void) {
+  eachStitch(
+    cb: (d: { stitch: Stitch; x: number; y: number; index: number }) => void,
+  ) {
     this.mapStitches(cb);
   }
 }

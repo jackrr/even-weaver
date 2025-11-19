@@ -10,10 +10,13 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { clamp } from "@/util/math";
+import LongPressable from "@/client/components/LongPressable";
 import { fetchWeave, updateWeave } from "@/client/lib/api";
 import { useColorMap } from "@/client/lib/colors";
 import { useDebounce } from "@/client/lib/debounce";
 import { usePageTitle } from "@/client/lib/title";
+import DetailsModal from "./Weave/DetailsModal";
+import SummaryModal from "./Weave/SummaryModal";
 
 const BASE_STITCH = 4;
 const BASE_GAP = 1;
@@ -179,6 +182,9 @@ export default function Weave() {
     [setZoom],
   );
 
+  const [summaryOpen, setSummaryOpen] = useState(false);
+  const [selectedCell, setSelectedCell] = useState<number>();
+
   if (!weave) return null;
 
   const { pattern, name } = weave;
@@ -190,7 +196,22 @@ export default function Weave() {
   // TODO: global summary (color mapping to names with totals, % complete) - can show in modal
   return (
     <>
-      <h2>{name}</h2>
+      <div className="flex flex-row text-lg">
+        <button
+          className="p-2 cursor-pointer"
+          onClick={() => setSummaryOpen(true)}
+        >
+          &#128712;
+        </button>
+        <h2 className="my-2">{name}</h2>
+      </div>
+      <SummaryModal open={summaryOpen} toggleOpen={setSummaryOpen} />
+      {selectedCell && (
+        <DetailsModal
+          cell={selectedCell}
+          close={() => setSelectedCell(undefined)}
+        />
+      )}
       <div
         className={`bg-gray-600 overflow-hidden grow`}
         onDragOver={(e) => panNext(e.clientX, e.clientY)}
@@ -214,10 +235,12 @@ export default function Weave() {
           onDragEnd={onDragEnd}
           onWheel={onMouseWheel}
         >
-          {pattern.mapStitches(({ stitch, x, y }) => {
+          {pattern.mapStitches(({ stitch, x, y, index }) => {
             const color = colors ? `#${colors[stitch.c]?.hex}` : "";
             return (
-              <div
+              <LongPressable
+                threshold={200}
+                onLongPress={() => setSelectedCell(index)}
                 className="flex content-center justify-center cursor-pointer"
                 style={{
                   backgroundColor: color,
@@ -229,7 +252,7 @@ export default function Weave() {
               >
                 {stitch.s === "done" ? (
                   <div
-                    className=" text-gray-100 bg-black opacity-40 w-full h-full"
+                    className=" text-gray-100 bg-green-700 w-full h-full"
                     style={{
                       fontSize: STITCH_SIZE,
                       paddingLeft: STITCH_SIZE / 16,
@@ -239,7 +262,7 @@ export default function Weave() {
                     ✓
                   </div>
                 ) : null}
-              </div>
+              </LongPressable>
             );
           })}
         </div>

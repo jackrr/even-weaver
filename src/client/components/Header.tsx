@@ -4,7 +4,7 @@ export default function Header() {
   const { loading, loggedIn } = useAuthContext();
 
   return (
-    <div className="flex flex-row pb-2">
+    <div className="flex flex-row pb-2 text-xl border-b">
       <h1 className="grow">
         <a href="/">Even Weaver</a>
       </h1>
