@@ -38,6 +38,7 @@ export default function Weave() {
   const { mutate: toggleCellCompletion } = useMutation({
     mutationFn: async ({ x, y }: { x: number; y: number }) => {
       if (!id) return;
+      // FIXME: this should trigger immediate render of update without waiting for the request to complete
       pattern.toggleStitch(x, y);
       return updateWeave(id, name, pattern);
     },

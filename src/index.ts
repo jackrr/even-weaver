@@ -1,6 +1,7 @@
 import { serve } from "bun";
 import index from "./index.html";
 import { login, logout, createUser, isLoggedIn } from "./api/auth";
+import { tracedHandler } from "@/api/util";
 import { getColors } from "./api/colors";
 import {
   getWeave,
@@ -15,33 +16,33 @@ export const server = serve({
     "/*": index,
 
     "/logged-in": {
-      GET: isLoggedIn,
+      GET: tracedHandler(isLoggedIn),
     },
 
     "/login": {
-      POST: login,
+      POST: tracedHandler(login),
     },
 
     "/logout": {
-      GET: logout,
+      GET: tracedHandler(logout),
     },
 
     "/accounts": {
-      POST: createUser,
+      POST: tracedHandler(createUser),
     },
 
     "/api/weaves/:id": {
-      GET: getWeave,
-      PUT: updateWeave,
-      DELETE: deleteWeave,
+      GET: tracedHandler(getWeave),
+      PUT: tracedHandler(updateWeave),
+      DELETE: tracedHandler(deleteWeave),
     },
     "/api/weaves": {
-      GET: getUserWeaves,
-      POST: createWeave,
+      GET: tracedHandler(getUserWeaves),
+      POST: tracedHandler(createWeave),
     },
 
     "/api/colors": {
-      GET: getColors,
+      GET: tracedHandler(getColors),
     },
   },
 
