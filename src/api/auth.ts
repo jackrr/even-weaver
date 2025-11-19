@@ -48,7 +48,7 @@ export async function login(req: Bun.BunRequest<"/login">) {
 
   const token = await AuthToken.generate(user);
 
-  req.cookies.set(SESSION_KEY, token.token);
+  req.cookies.set(SESSION_KEY, token.token, { expires: token.expiresAt });
   return Response.redirect("/");
 }
 
@@ -65,7 +65,7 @@ export async function createUser(req: Bun.BunRequest<"/accounts">) {
   );
   const token = await AuthToken.generate(user);
 
-  req.cookies.set(SESSION_KEY, token.token);
+  req.cookies.set(SESSION_KEY, token.token, { expires: token.expiresAt });
   return Response.redirect("/");
 }
 
