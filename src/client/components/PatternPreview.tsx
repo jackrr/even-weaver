@@ -21,7 +21,7 @@ export default function PatternPreview({ pattern }: Props) {
       }}
     >
       {pattern.mapStitches(({ stitch, x, y }) => {
-        const color = colors ? `#${colors[stitch.c]?.hex}` : "";
+        const color = colors ? `#${colors[stitch[0]]?.hex}` : "";
         return (
           <div
             style={{

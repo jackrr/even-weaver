@@ -60,14 +60,11 @@ export async function fetchWeave(id: string): Promise<Weave> {
 }
 
 export async function updateWeave(id: string, name: string, pattern: Pattern) {
-  const res = await fetch(`/api/weaves/${id}`, {
+  await fetch(`/api/weaves/${id}`, {
     method: "put",
     body: JSON.stringify({
       name,
       pattern: pattern.serialize(),
     }),
   });
-
-  const weave = await res.json();
-  return deserializeWeave(weave);
 }

@@ -1,12 +1,12 @@
-export type Status = "todo" | "done";
-
-interface Stitch {
-  c: number;
-  s: Status;
+export enum Status {
+  TODO = 0,
+  DONE = 1,
 }
 
-function toggleDone(s: Stitch) {
-  s.s = s.s === "done" ? "todo" : "done";
+export type Stitch = [number, Status];
+
+export function toggleDone(s: Stitch) {
+  s[1] = s[1] === Status.DONE ? Status.TODO : Status.DONE;
 }
 
 export class Pattern {
@@ -24,7 +24,7 @@ export class Pattern {
     return new Pattern(
       width,
       height,
-      new Array(width * height).fill({ c: 0, s: "todo" }),
+      new Array(width * height).fill([0, Status.TODO]),
     );
   }
 
@@ -67,15 +67,14 @@ export class Pattern {
   mapStitches<T>(
     cb: (d: { stitch: Stitch; x: number; y: number; index: number }) => T,
   ): T[] {
-    const result = [];
-    let index = 0;
-    for (let y = 0; y < this.height; y++) {
-      for (let x = 0; x < this.width; x++) {
-        result.push(cb({ stitch: this.getStitch(x, y), x, y, index }));
-        index += 1;
-      }
-    }
-    return result;
+    return this.stitches.map((stitch, index) =>
+      cb({
+        stitch,
+        index,
+        x: index % this.width,
+        y: Math.floor(index / this.width),
+      }),
+    );
   }
 
   eachStitch(

@@ -1,5 +1,5 @@
 import sharp from "sharp";
-import { Pattern } from "@/util/pattern";
+import { Pattern, Status } from "@/util/pattern";
 import Color from "../util/color";
 import Coord from "../util/coord";
 import db from "../models/index";
@@ -94,7 +94,7 @@ export async function patternFromGridPng(imagePath: string): Promise<Pattern> {
     }
 
     const { x, y } = cell.gridPos;
-    pattern.setStitch(x, y, { c: colorId, s: "todo" });
+    pattern.setStitch(x, y, [colorId, Status.TODO]);
   }
 
   return pattern;
@@ -144,7 +144,7 @@ export async function patternFromImage(
         colorCache[color.toString()] = colorId;
       }
 
-      pattern.setStitch(x, y, { c: colorId, s: "todo" });
+      pattern.setStitch(x, y, [colorId, Status.TODO]);
     }
   }
 

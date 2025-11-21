@@ -1,5 +1,6 @@
 import {
   useCallback,
+  useEffect,
   useRef,
   useState,
   type DragEventHandler,
@@ -10,13 +11,13 @@ import {
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useParams } from "react-router";
 import { clamp } from "@/util/math";
-import LongPressable from "@/client/components/LongPressable";
 import { fetchWeave, updateWeave } from "@/client/lib/api";
 import { useColorMap } from "@/client/lib/colors";
 import { useDebounce } from "@/client/lib/debounce";
 import { usePageTitle } from "@/client/lib/title";
 import DetailsModal from "./Weave/DetailsModal";
 import SummaryModal from "./Weave/SummaryModal";
+import Stitch from "./Weave/Stitch";
 
 const BASE_STITCH = 4;
 const BASE_GAP = 1;
@@ -26,25 +27,23 @@ const MAX_ZOOM = 20;
 
 export default function Weave() {
   const { id } = useParams();
-  const colors = useColorMap();
   const queryClient = useQueryClient();
+  const colors = useColorMap();
   const { data: weave } = useQuery({
     queryKey: ["weave", id],
     queryFn: () => fetchWeave(id!),
     enabled: !!id,
   });
 
-  const debounce = useDebounce(1000);
-  const { mutate: toggleCellCompletion } = useMutation({
-    mutationFn: async ({ x, y }: { x: number; y: number }) => {
+  const debounceRefresh = useDebounce(1000);
+  const { mutate: persistChanges } = useMutation({
+    mutationFn: async () => {
       if (!id) return;
-      // FIXME: this should trigger immediate render of update without waiting for the request to complete
-      pattern.toggleStitch(x, y);
       return updateWeave(id, name, pattern);
     },
     onSuccess: () => {
       // Use a debounce to prevent race condition from causing "blink" of checkboxes
-      debounce(() => {
+      debounceRefresh(() => {
         queryClient.invalidateQueries({ queryKey: ["weave", id] });
       });
     },
@@ -54,6 +53,8 @@ export default function Weave() {
   const gridRef = useRef<HTMLDivElement>(null);
 
   const [zoom, setZoomInternal] = useState(DEFAULT_ZOOM);
+  const prevZoom = useRef(DEFAULT_ZOOM);
+
   const setZoom = useCallback(
     (setter: (prev: number) => number) => {
       setZoomInternal((prev) => {
@@ -61,29 +62,35 @@ export default function Weave() {
         next = clamp(next, MIN_ZOOM, MAX_ZOOM);
         if (!weave || !gridRef.current) return next;
 
-        // Zoom around "center"
-        const {
-          clientWidth: width,
-          clientHeight: height,
-          scrollTop,
-          scrollLeft,
-        } = gridRef.current;
-        const zoomRatio = next / prev;
-
-        const centerX = scrollLeft + width / 2;
-        const centerY = scrollTop + height / 2;
-        const newCenterX = centerX * zoomRatio;
-        const newCenterY = centerY * zoomRatio;
-        const newScrollX = newCenterX - width / 2;
-        const newScrollY = newCenterY - height / 2;
-
-        gridRef.current.scrollTo(newScrollX, newScrollY);
-
         return next;
       });
     },
     [setZoomInternal, weave],
   );
+
+  useEffect(() => {
+    if (zoom === prevZoom.current) return;
+    if (!gridRef.current) return;
+
+    // Zoom around "center"
+    const {
+      clientWidth: width,
+      clientHeight: height,
+      scrollTop,
+      scrollLeft,
+    } = gridRef.current;
+    const zoomRatio = zoom / prevZoom.current;
+
+    const centerX = scrollLeft + width / 2;
+    const centerY = scrollTop + height / 2;
+    const newCenterX = centerX * zoomRatio;
+    const newCenterY = centerY * zoomRatio;
+    const newScrollX = newCenterX - width / 2;
+    const newScrollY = newCenterY - height / 2;
+
+    gridRef.current.scrollTo(newScrollX, newScrollY);
+    prevZoom.current = zoom;
+  }, [zoom]);
 
   const lastDragCoord = useRef<[number, number]>(null);
   const panStart = useCallback((x: number, y: number) => {
@@ -190,8 +197,8 @@ export default function Weave() {
 
   const { pattern, name } = weave;
   const { width, height } = pattern;
-  const STITCH_SIZE = BASE_STITCH * zoom;
-  const GAP = BASE_GAP * zoom;
+  const stitchSize = BASE_STITCH * zoom;
+  const stitchGap = BASE_GAP * zoom;
 
   // TODO: long press cell trigger info popup
   // TODO: global summary (color mapping to names with totals, % complete) - can show in modal
@@ -217,16 +224,15 @@ export default function Weave() {
         className={`bg-gray-600 overflow-hidden grow`}
         onDragOver={(e) => panNext(e.clientX, e.clientY)}
         ref={gridRef}
-        onDoubleClick={() => setZoom((zoom) => zoom * 2)}
       >
         <div
           className="grid"
           style={{
             gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
-            height: height * (STITCH_SIZE + GAP),
-            width: width * (STITCH_SIZE + GAP),
-            gap: GAP,
-            margin: `${STITCH_SIZE}px`,
+            height: height * (stitchSize + stitchGap),
+            width: width * (stitchSize + stitchGap),
+            gap: stitchGap,
+            margin: `${stitchSize}px`,
           }}
           draggable
           onTouchStart={onTouchStart}
@@ -237,33 +243,20 @@ export default function Weave() {
           onWheel={onMouseWheel}
         >
           {pattern.mapStitches(({ stitch, x, y, index }) => {
-            const color = colors ? `#${colors[stitch.c]?.hex}` : "";
+            const color = colors ? `#${colors[stitch[0]]?.hex}` : "";
+
             return (
-              <LongPressable
-                threshold={200}
-                onLongPress={() => setSelectedCell(index)}
-                className="flex content-center justify-center cursor-pointer"
-                style={{
-                  backgroundColor: color,
-                  width: STITCH_SIZE,
-                  height: STITCH_SIZE,
+              <Stitch
+                key={`stitch-${index}`}
+                size={stitchSize}
+                color={color}
+                status={stitch[1]}
+                select={() => setSelectedCell(index)}
+                toggleComplete={() => {
+                  pattern.toggleStitch(x, y);
+                  persistChanges();
                 }}
-                key={`cell-${y}-${x}`}
-                onClick={() => toggleCellCompletion({ x, y })}
-              >
-                {stitch.s === "done" ? (
-                  <div
-                    className=" text-gray-100 bg-green-700 w-full h-full"
-                    style={{
-                      fontSize: STITCH_SIZE,
-                      paddingLeft: STITCH_SIZE / 16,
-                      lineHeight: "100%",
-                    }}
-                  >
-                    ✓
-                  </div>
-                ) : null}
-              </LongPressable>
+              />
             );
           })}
         </div>

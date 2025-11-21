@@ -1,5 +1,5 @@
 import { type Color as ColorResponseType } from "./api";
-import { Pattern } from "@/util/pattern";
+import { Pattern, Status } from "@/util/pattern";
 import Color from "@/util/color";
 
 export function imageToPattern(
@@ -70,7 +70,7 @@ export function imageToPattern(
             colorCache[color.toString()] = colorId;
           }
 
-          pattern.setStitch(x, y, { c: colorId, s: "todo" });
+          pattern.setStitch(x, y, [colorId, Status.TODO]);
         }
       }
 
