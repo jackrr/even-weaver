@@ -7,6 +7,7 @@ export function imageToPattern(
   colors: ColorResponseType[],
   maxWidth: number,
   maxHeight: number,
+  maxColors: number,
 ) {
   return new Promise<Pattern>((resolve, reject) => {
     const img = new Image();
@@ -73,6 +74,15 @@ export function imageToPattern(
           pattern.setStitch(x, y, [colorId, Status.TODO]);
         }
       }
+
+      const colorMap = colors.reduce(
+        (map, color) => {
+          map[color.id] = color;
+          return map;
+        },
+        {} as { [key: string]: ColorResponseType },
+      );
+      pattern.simplifyColors(maxColors, colorMap);
 
       resolve(pattern);
     };

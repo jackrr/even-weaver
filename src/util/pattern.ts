@@ -1,3 +1,5 @@
+import Color, { type Colorish } from "./color";
+
 export enum Status {
   TODO = 0,
   DONE = 1,
@@ -81,5 +83,80 @@ export class Pattern {
     cb: (d: { stitch: Stitch; x: number; y: number; index: number }) => void,
   ) {
     this.mapStitches(cb);
+  }
+
+  simplifyColors(
+    maxColorCount: number,
+    colorIndex: { [id: string]: Colorish },
+  ) {
+    type CountedColor = {
+      count: number;
+      color: Color;
+    };
+
+    const colorCounts: { [id: string]: CountedColor } = {};
+    for (const cell of this.stitches) {
+      if (colorCounts[cell[0]]) {
+        colorCounts[cell[0]]!.count += 1;
+      } else {
+        const color = colorIndex[cell[0]]!;
+        colorCounts[cell[0]] = {
+          color: new Color(color.r, color.g, color.b),
+          count: 1,
+        };
+      }
+    }
+
+    function minCell() {
+      let minCount = 100000000;
+      let minColorId: string;
+      for (const [id, color] of Object.entries(colorCounts)) {
+        if (color.count < minCount) {
+          minColorId = id;
+          minCount = color.count;
+        }
+      }
+
+      return minColorId!;
+    }
+
+    const colorMapping: { [src: string]: string } = {};
+
+    while (Object.keys(colorCounts).length > maxColorCount) {
+      let nextId = minCell();
+      const next = colorCounts[nextId]!;
+      let minDist = 100000000;
+      let nearest: CountedColor;
+      let nearestId: string;
+      for (const [id, cc] of Object.entries(colorCounts)) {
+        if (id === nextId) continue;
+
+        if (cc.color.distance(next.color) < minDist) {
+          minDist = cc.color.distance(next.color);
+          nearest = cc;
+          nearestId = id;
+        }
+      }
+
+      nearest!.count += next.count;
+      delete colorCounts[nextId];
+
+      colorMapping[nextId] = nearestId!;
+
+      for (const [src, target] of Object.entries(colorMapping)) {
+        if (target === nextId) {
+          colorMapping[src] = nearestId!;
+        }
+      }
+
+      nextId = minCell();
+    }
+
+    // Remap all colors in pattern according to mapping
+    for (const stitch of this.stitches) {
+      if (stitch[0] in colorMapping) {
+        stitch[0] = parseInt(colorMapping[stitch[0]]!);
+      }
+    }
   }
 }

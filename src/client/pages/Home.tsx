@@ -18,7 +18,7 @@ export default function Home() {
   return (
     <>
       <h2>Your weaves</h2>
-      <div className="grid">
+      <div className="grid overflow-auto">
         {weaves?.map((weave) => (
           <a key={weave.id} href={`/weaves/${weave.id}`}>
             <h3>{weave.name}</h3>

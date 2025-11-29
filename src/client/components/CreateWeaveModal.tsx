@@ -12,6 +12,7 @@ type Props = Pick<ComponentProps<typeof Modal>, "open" | "toggleOpen">;
 export default function CreateWeaveModal({ open, toggleOpen }: Props) {
   const [width, setWidth] = useState(100);
   const [height, setHeight] = useState(100);
+  const [maxColors, setMaxColors] = useState(50);
   const [imagePath, setImagePath] = useState<File | null>();
   const [pattern, setPattern] = useState<Pattern>();
   const queryClient = useQueryClient();
@@ -34,12 +35,18 @@ export default function CreateWeaveModal({ open, toggleOpen }: Props) {
     async function convertImage() {
       if (!imagePath || !colors) return;
 
-      const pattern = await imageToPattern(imagePath, colors, width, height);
+      const pattern = await imageToPattern(
+        imagePath,
+        colors,
+        width,
+        height,
+        maxColors,
+      );
       setPattern(pattern);
     }
 
     convertImage();
-  }, [imagePath, width, height, setPattern, colors]);
+  }, [imagePath, width, height, maxColors, setPattern, colors]);
 
   async function submit() {
     if (!pattern) return alert("Upload an image first");
@@ -53,14 +60,27 @@ export default function CreateWeaveModal({ open, toggleOpen }: Props) {
     <Modal open={open} toggleOpen={toggleOpen}>
       <input ref={nameRef} type="text" />
       <input
-        onChange={(e) => setWidth(e.target.valueAsNumber)}
+        onChange={(e) =>
+          e.target.valueAsNumber > 0 && setMaxColors(e.target.valueAsNumber)
+        }
+        defaultValue={maxColors}
+        type="number"
+        min="1"
+        max="10000"
+      />
+      <input
+        onChange={(e) =>
+          e.target.valueAsNumber > 0 && setWidth(e.target.valueAsNumber)
+        }
         defaultValue={width}
         type="number"
         min="1"
         max="1000"
       />
       <input
-        onChange={(e) => setHeight(e.target.valueAsNumber)}
+        onChange={(e) =>
+          e.target.valueAsNumber > 0 && setHeight(e.target.valueAsNumber)
+        }
         defaultValue={height}
         type="number"
         min="1"

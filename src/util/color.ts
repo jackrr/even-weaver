@@ -1,4 +1,4 @@
-interface Colorish {
+export interface Colorish {
   r: number;
   g: number;
   b: number;
