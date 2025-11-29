@@ -204,6 +204,9 @@ export default function Weave() {
   const stitchSize = BASE_STITCH * zoom;
   const stitchGap = BASE_GAP * zoom;
 
+  // FIXME: zoom performance
+  // FIXME: complete stitch performance
+
   return (
     <>
       <div className="flex flex-row text-lg">
@@ -270,23 +273,25 @@ export default function Weave() {
             );
           })}
           <div className="absolute w-full h-full">
-            {[...Array(weave.pattern.width / 10)].map((_, xOffset) =>
-              xOffset ? (
-                <div
-                  key={`${xOffset}-vert`}
-                  className="absolute bg-black w-1 h-full t-0"
-                  style={{ left: xOffset * (stitchSize + stitchGap) * 10 }}
-                />
-              ) : null,
+            {[...Array(Math.floor(weave.pattern.width / 10))].map(
+              (_, xOffset) =>
+                xOffset ? (
+                  <div
+                    key={`${xOffset}-vert`}
+                    className="absolute bg-black w-1 h-full t-0"
+                    style={{ left: xOffset * (stitchSize + stitchGap) * 10 }}
+                  />
+                ) : null,
             )}
-            {[...Array(weave.pattern.height / 10)].map((_, yOffset) =>
-              yOffset ? (
-                <div
-                  key={`${yOffset}-horiz`}
-                  className="absolute bg-black h-1 w-full l-0"
-                  style={{ top: yOffset * (stitchSize + stitchGap) * 10 }}
-                />
-              ) : null,
+            {[...Array(Math.floor(weave.pattern.height / 10))].map(
+              (_, yOffset) =>
+                yOffset ? (
+                  <div
+                    key={`${yOffset}-horiz`}
+                    className="absolute bg-black h-1 w-full l-0"
+                    style={{ top: yOffset * (stitchSize + stitchGap) * 10 }}
+                  />
+                ) : null,
             )}
           </div>
         </div>
