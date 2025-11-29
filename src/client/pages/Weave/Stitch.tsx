@@ -23,7 +23,7 @@ export default function Stitch({
     <LongPressable
       threshold={200}
       onLongPress={select}
-      className="flex content-center justify-center cursor-pointer"
+      className="flex content-center justify-center cursor-pointer z-10"
       style={{
         backgroundColor: color,
         width: size,
