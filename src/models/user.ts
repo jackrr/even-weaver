@@ -7,8 +7,6 @@ import type {
 import { Model } from "sequelize";
 import AuthToken from "./authtoken";
 
-const SPECIAL_CHARS = new Set("_-*!?=<>()[]".split(""));
-
 class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   declare id: CreationOptional<number>;
   declare username: string;
@@ -24,19 +22,9 @@ class User extends Model<InferAttributes<User>, InferCreationAttributes<User>> {
   };
 
   static validatePassword(password: string): string | null {
-    if (password.length < 8) {
-      return "Too short. Must be at least 8 characters";
+    if (password.length < 6) {
+      return "Too short. Must be at least 6 characters";
     }
-
-    const setted = new Set(password.split(""));
-    if (setted.intersection(SPECIAL_CHARS).size === 0) {
-      return `Missing special char: '${Array.from(SPECIAL_CHARS).join("")}'`;
-    }
-
-    if (!password.match(/\d/)) {
-      return "Missing at least one number";
-    }
-
     return null;
   }
 
