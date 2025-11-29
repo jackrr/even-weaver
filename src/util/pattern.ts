@@ -107,7 +107,7 @@ export class Pattern {
       }
     }
 
-    function minCell() {
+    function nextToKill() {
       let minCount = 100000000;
       let minColorId: string;
       for (const [id, color] of Object.entries(colorCounts)) {
@@ -123,7 +123,7 @@ export class Pattern {
     const colorMapping: { [src: string]: string } = {};
 
     while (Object.keys(colorCounts).length > maxColorCount) {
-      let nextId = minCell();
+      let nextId = nextToKill();
       const next = colorCounts[nextId]!;
       let minDist = 100000000;
       let nearest: CountedColor;
@@ -148,8 +148,6 @@ export class Pattern {
           colorMapping[src] = nearestId!;
         }
       }
-
-      nextId = minCell();
     }
 
     // Remap all colors in pattern according to mapping

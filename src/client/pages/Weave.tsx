@@ -200,8 +200,6 @@ export default function Weave() {
   const stitchSize = BASE_STITCH * zoom;
   const stitchGap = BASE_GAP * zoom;
 
-  // TODO: long press cell trigger info popup
-  // TODO: global summary (color mapping to names with totals, % complete) - can show in modal
   return (
     <>
       <div className="flex flex-row text-lg">
@@ -213,7 +211,11 @@ export default function Weave() {
         </button>
         <h2 className="my-2">{name}</h2>
       </div>
-      <SummaryModal open={summaryOpen} toggleOpen={setSummaryOpen} />
+      <SummaryModal
+        weave={weave}
+        open={summaryOpen}
+        toggleOpen={setSummaryOpen}
+      />
       {selectedCell && (
         <DetailsModal
           cell={selectedCell}

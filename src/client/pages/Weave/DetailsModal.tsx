@@ -9,6 +9,7 @@ type Props = {
 };
 
 export default function DetailsModal({ cell, close }: Props) {
+  // TODO: color detail info
   return (
     <Modal open={true} toggleOpen={close}>
       Cell {cell}
