@@ -18,7 +18,6 @@ export default function Stitch({
   size,
   inactive,
 }: Props) {
-  // TODO: better completion UI
   return (
     <LongPressable
       threshold={200}
@@ -38,15 +37,11 @@ export default function Stitch({
     >
       {status === Status.DONE ? (
         <div
-          className=" text-gray-100 bg-green-700 w-full h-full"
+          className="w-full h-full"
           style={{
-            fontSize: size,
-            paddingLeft: size / 16,
-            lineHeight: "100%",
+            background: `repeating-linear-gradient(-45deg, transparent, transparent ${size / 8}px, #333 ${size / 8}px, #333 ${size / 4}px)`,
           }}
-        >
-          ✓
-        </div>
+        />
       ) : null}
     </LongPressable>
   );
