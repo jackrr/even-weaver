@@ -85,6 +85,32 @@ export class Pattern {
     this.mapStitches(cb);
   }
 
+  remapToNearest(colorId: number, colorIndex: { [id: number]: Colorish }) {
+    // 1. find nearest color in pattern
+    const foundColors = new Set<number>();
+    for (const stitch of this.stitches) {
+      foundColors.add(stitch[0]);
+    }
+
+    let nearestId: number;
+    let minDist = 10000000;
+    const current = colorIndex[colorId]!;
+    for (const fid of foundColors) {
+      const ish = colorIndex[fid]!;
+      const color = new Color(ish.r, ish.g, ish.b);
+      if (color.distance(current) < minDist) {
+        nearestId = fid;
+      }
+    }
+
+    // 2. update all entries of prev to be nearest
+    for (const stitch of this.stitches) {
+      if (stitch[0] === colorId) {
+        stitch[0] = nearestId!;
+      }
+    }
+  }
+
   simplifyColors(
     maxColorCount: number,
     colorIndex: { [id: string]: Colorish },

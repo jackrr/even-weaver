@@ -53,13 +53,17 @@ export async function fetchWeaves(): Promise<Weave[]> {
   return weavesIsh.map(deserializeWeave);
 }
 
-export async function fetchWeave(id: string): Promise<Weave> {
+export async function fetchWeave(id: string | number): Promise<Weave> {
   const res = await fetch(`/api/weaves/${id}`);
   const weave = await res.json();
   return deserializeWeave(weave);
 }
 
-export async function updateWeave(id: string, name: string, pattern: Pattern) {
+export async function updateWeave(
+  id: string | number,
+  name: string,
+  pattern: Pattern,
+) {
   await fetch(`/api/weaves/${id}`, {
     method: "put",
     body: JSON.stringify({
@@ -69,7 +73,7 @@ export async function updateWeave(id: string, name: string, pattern: Pattern) {
   });
 }
 
-export async function deleteWeave(id: number) {
+export async function deleteWeave(id: string | number) {
   await fetch(`/api/weaves/${id}`, {
     method: "delete",
   });

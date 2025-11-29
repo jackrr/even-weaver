@@ -38,13 +38,15 @@ export default function Weave() {
   const debounceRefresh = useDebounce(1000);
   const { mutate: persistChanges } = useMutation({
     mutationFn: async () => {
-      if (!id) return;
+      if (!id || !weave) return;
+      const { name, pattern } = weave;
       return updateWeave(id, name, pattern);
     },
     onSuccess: () => {
       // Use a debounce to prevent race condition from causing "blink" of checkboxes
       debounceRefresh(() => {
         queryClient.invalidateQueries({ queryKey: ["weave", id] });
+        queryClient.invalidateQueries({ queryKey: ["weaves"] });
       });
     },
   });
