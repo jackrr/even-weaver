@@ -1,13 +1,17 @@
-import { useMemo, type ComponentProps } from "react";
+import { useMemo, useState, type ComponentProps } from "react";
+import { useNavigate } from "react-router";
+import { useMutation } from "@tanstack/react-query";
 import Modal from "@/client/components/Modal";
-import type { Weave, Color } from "@/client/lib/api";
+import { deleteWeave, type Weave, type Color } from "@/client/lib/api";
 import { useColorMap } from "@/client/lib/colors";
+import ConfirmationModal from "@/client/components/ConfirmationModal";
 
 type Props = Pick<ComponentProps<typeof Modal>, "open" | "toggleOpen"> & {
   weave: Weave;
 };
 
 export default function SummaryModal({ weave, ...modalProps }: Props) {
+  const navigate = useNavigate();
   const colors = useColorMap();
   const totals = useMemo(() => {
     if (!colors) return [];
@@ -27,6 +31,16 @@ export default function SummaryModal({ weave, ...modalProps }: Props) {
 
     return Object.values(colorCounts).sort((a, b) => a.count - b.count);
   }, [weave.pattern.stitches, colors]);
+
+  const [showDelete, setShowDelete] = useState(false);
+  const { mutate: startDeleteRequest } = useMutation({
+    mutationFn: async () => deleteWeave(weave.id),
+    onSuccess: () => {
+      // TODO: confirmation banner + error handling
+      navigate("/");
+    },
+  });
+
   return (
     <Modal {...modalProps}>
       <ul>
@@ -48,6 +62,15 @@ export default function SummaryModal({ weave, ...modalProps }: Props) {
           </li>
         ))}
       </ul>
+      <button className="cursor-pointer" onClick={() => setShowDelete(true)}>
+        Delete!
+      </button>
+      <ConfirmationModal
+        open={showDelete}
+        toggleOpen={setShowDelete}
+        confirm={startDeleteRequest}
+        header="Delete this weave?"
+      />
     </Modal>
   );
 }

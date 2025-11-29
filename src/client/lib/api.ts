@@ -68,3 +68,9 @@ export async function updateWeave(id: string, name: string, pattern: Pattern) {
     }),
   });
 }
+
+export async function deleteWeave(id: number) {
+  await fetch(`/api/weaves/${id}`, {
+    method: "delete",
+  });
+}
