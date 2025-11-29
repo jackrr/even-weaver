@@ -18,7 +18,6 @@ export default function DetailsModal({
   activeColor,
   setActiveColor,
 }: Props) {
-  // Thread name and number
   const colors = useColorMap();
   const color = useMemo(() => {
     if (!colors) return;

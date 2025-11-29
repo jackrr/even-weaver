@@ -23,6 +23,18 @@ export default function Modal({
     }
   }, [open]);
 
+  useEffect(() => {
+    function onClose() {
+      toggleOpen(false);
+    }
+
+    dialog.current?.addEventListener("close", onClose);
+
+    return () => {
+      dialog.current?.removeEventListener("close", onClose);
+    };
+  }, []);
+
   return (
     <dialog
       ref={dialog}
