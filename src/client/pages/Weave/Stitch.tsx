@@ -18,6 +18,7 @@ export default function Stitch({
   size,
   inactive,
 }: Props) {
+  // FIXME: right click/long press break after one or two modal opens
   return (
     <LongPressable
       threshold={200}

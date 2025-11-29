@@ -204,8 +204,6 @@ export default function Weave() {
   const stitchSize = BASE_STITCH * zoom;
   const stitchGap = BASE_GAP * zoom;
 
-  // TODO: 10x10 borders
-
   return (
     <>
       <div className="flex flex-row text-lg">
@@ -237,7 +235,7 @@ export default function Weave() {
         ref={gridRef}
       >
         <div
-          className="grid"
+          className="grid relative"
           style={{
             gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
             height: height * (stitchSize + stitchGap),
@@ -261,7 +259,7 @@ export default function Weave() {
                 key={`stitch-${index}`}
                 size={stitchSize}
                 color={`#${color.hex}`}
-                inactive={activeColor && activeColor !== color.id}
+                inactive={!!activeColor && activeColor !== color.id}
                 status={stitch[1]}
                 select={() => setSelectedCell([x, y])}
                 toggleComplete={() => {
@@ -271,6 +269,26 @@ export default function Weave() {
               />
             );
           })}
+          <div className="absolute w-full h-full">
+            {[...Array(weave.pattern.width / 10)].map((_, xOffset) =>
+              xOffset ? (
+                <div
+                  key={`${xOffset}-vert`}
+                  className="absolute bg-black w-1 h-full t-0"
+                  style={{ left: xOffset * (stitchSize + stitchGap) * 10 }}
+                />
+              ) : null,
+            )}
+            {[...Array(weave.pattern.height / 10)].map((_, yOffset) =>
+              yOffset ? (
+                <div
+                  key={`${yOffset}-horiz`}
+                  className="absolute bg-black h-1 w-full l-0"
+                  style={{ top: yOffset * (stitchSize + stitchGap) * 10 }}
+                />
+              ) : null,
+            )}
+          </div>
         </div>
       </div>
     </>
