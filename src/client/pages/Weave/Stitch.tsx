@@ -7,6 +7,7 @@ type Props = {
   select: () => void;
   toggleComplete: () => void;
   size: number;
+  inactive: boolean;
 };
 
 export default function Stitch({
@@ -15,7 +16,9 @@ export default function Stitch({
   select,
   toggleComplete,
   size,
+  inactive,
 }: Props) {
+  // TODO: better completion UI
   return (
     <LongPressable
       threshold={200}
@@ -25,6 +28,7 @@ export default function Stitch({
         backgroundColor: color,
         width: size,
         height: size,
+        opacity: inactive ? 0.1 : 1,
       }}
       onClick={toggleComplete}
     >

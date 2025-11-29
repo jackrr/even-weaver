@@ -193,14 +193,18 @@ export default function Weave() {
   );
 
   const [summaryOpen, setSummaryOpen] = useState(false);
-  const [selectedCell, setSelectedCell] = useState<number>();
+  const [selectedCell, setSelectedCell] = useState<[number, number]>();
 
-  if (!weave) return null;
+  const [activeColor, setActiveColor] = useState<number>();
+
+  if (!weave || !colors) return null;
 
   const { pattern, name } = weave;
   const { width, height } = pattern;
   const stitchSize = BASE_STITCH * zoom;
   const stitchGap = BASE_GAP * zoom;
+
+  // TODO: 10x10 borders
 
   return (
     <>
@@ -220,8 +224,11 @@ export default function Weave() {
       />
       {selectedCell && (
         <DetailsModal
+          weave={weave}
           cell={selectedCell}
           close={() => setSelectedCell(undefined)}
+          activeColor={activeColor}
+          setActiveColor={(id: number | undefined) => setActiveColor(id)}
         />
       )}
       <div
@@ -247,15 +254,16 @@ export default function Weave() {
           onWheel={onMouseWheel}
         >
           {pattern.mapStitches(({ stitch, x, y, index }) => {
-            const color = colors ? `#${colors[stitch[0]]?.hex}` : "";
+            const color = colors[stitch[0]]!;
 
             return (
               <Stitch
                 key={`stitch-${index}`}
                 size={stitchSize}
-                color={color}
+                color={`#${color.hex}`}
+                inactive={activeColor && activeColor !== color.id}
                 status={stitch[1]}
-                select={() => setSelectedCell(index)}
+                select={() => setSelectedCell([x, y])}
                 toggleComplete={() => {
                   pattern.toggleStitch(x, y);
                   persistChanges();
