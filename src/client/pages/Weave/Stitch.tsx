@@ -31,6 +31,10 @@ export default function Stitch({
         opacity: inactive ? 0.1 : 1,
       }}
       onClick={toggleComplete}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        select();
+      }}
     >
       {status === Status.DONE ? (
         <div
