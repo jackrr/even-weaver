@@ -19,7 +19,7 @@ export function App() {
   return (
     <QueryClientProvider client={client}>
       <AuthProvider>
-        <div className="flex flex-col h-full w-full p-safe overflow-hidden max-w-5xl p-4">
+        <div className="flex flex-col h-full w-full p-safe overflow-hidden p-4">
           <Header />
           <Routes />
         </div>

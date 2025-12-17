@@ -1,5 +1,7 @@
 import { useRef, type KeyboardEvent } from "react";
+
 import { useReverifyAuth } from "../auth";
+import Button from "./Button";
 
 export default function AuthForm({ kind }: { kind: "login" | "register" }) {
   const usernameRef = useRef<HTMLInputElement>(null);
@@ -43,12 +45,9 @@ export default function AuthForm({ kind }: { kind: "login" | "register" }) {
         type="password"
         onKeyDown={submitOnEnter}
       />
-      <button
-        className="border p-2 bg-blue-900 cursor-pointer"
-        onClick={() => submitForm()}
-      >
+      <Button className="bg-blue-900" onClick={() => submitForm()}>
         Submit
-      </button>
+      </Button>
     </div>
   );
 }

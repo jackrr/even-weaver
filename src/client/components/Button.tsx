@@ -11,7 +11,7 @@ export default function Button({
 }) {
   return (
     <button
-      className={`cursor-pointer px-2 py-1 border border-(--color-foreground) rounded-xs ${className}`}
+      className={`cursor-pointer px-2 py-1 border border-(--color-foreground) rounded-lg ${className}`}
       onClick={onClick}
     >
       {children}

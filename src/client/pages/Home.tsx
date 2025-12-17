@@ -17,16 +17,20 @@ export default function Home() {
 
   return (
     <>
-      <h2>Your weaves</h2>
-      <div className="grid overflow-auto">
+      <h2 className="my-4 text-lg">Your weaves</h2>
+      <div className="flex flex-row flex-wrap overflow-y-auto gap-4 font-semibold">
         {weaves?.map((weave) => (
-          <a key={weave.id} href={`/weaves/${weave.id}`}>
-            <h3>{weave.name}</h3>
+          <a className="relative" key={weave.id} href={`/weaves/${weave.id}`}>
+            <h3 className="mb-2 absolute top-1/2 left-1/2 -translate-1/2 text-xl bg-gray-900 opacity-80 p-4 rounded-lg">
+              {weave.name}
+            </h3>
             <PatternPreview pattern={weave.pattern} />
           </a>
         ))}
       </div>
-      <Button onClick={() => setCreatingWeave(true)}>New Weave</Button>
+      <Button className="mt-5" onClick={() => setCreatingWeave(true)}>
+        Add a new Weave
+      </Button>
       <CreateWeaveModal open={creatingWeave} toggleOpen={setCreatingWeave} />
     </>
   );
