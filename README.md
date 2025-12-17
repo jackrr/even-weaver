@@ -30,22 +30,3 @@ docker buildx build --platform linux/amd64,linux/arm64 -t jackratner/even-weaver
 docker run -v ./tmp/:/usr/src/app/tmp/ --network host jackratner/even-weaver
 ```
 
-## Roadmap
-
-- Verify that generated cocteau twins color pallet matches Anna's project
-
-### Bugs
-
-- Some images (maybe vertical?) do not generate properly
-
-### Polish
-
-- Auth pages (login + sign-up)
-  - Enter/return in inputs should submit form
-  - Visual feedback on invalid credentials/create failure
-- Header (logout, username, site title)
-  - Make this somehow hidden but accessible on project detail page
-- Create project form
-- Project list page
-- Make a favicon/logo
-

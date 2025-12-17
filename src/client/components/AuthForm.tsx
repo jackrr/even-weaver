@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useRef, type KeyboardEvent } from "react";
 import { useReverifyAuth } from "../auth";
 
 export default function AuthForm({ kind }: { kind: "login" | "register" }) {
@@ -23,11 +23,32 @@ export default function AuthForm({ kind }: { kind: "login" | "register" }) {
     submit();
   }
 
+  function submitOnEnter(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Return" || e.key === "Enter") {
+      submitForm();
+    }
+  }
+
   return (
-    <>
-      <input ref={usernameRef} type="text" />
-      <input ref={passwordRef} type="password" />
-      <button onClick={() => submitForm()}>Submit</button>
-    </>
+    <div className="my-10 flex flex-col gap-4">
+      <input
+        className="border rounded-lg p-2"
+        ref={usernameRef}
+        type="text"
+        onKeyDown={submitOnEnter}
+      />
+      <input
+        className="border rounded-lg p-2"
+        ref={passwordRef}
+        type="password"
+        onKeyDown={submitOnEnter}
+      />
+      <button
+        className="border p-2 bg-blue-900 cursor-pointer"
+        onClick={() => submitForm()}
+      >
+        Submit
+      </button>
+    </div>
   );
 }
