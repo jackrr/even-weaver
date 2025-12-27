@@ -52,7 +52,7 @@ export default function Weave() {
   });
 
   usePageTitle(weave?.name);
-  const gridRef = useRef<HTMLDivElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
 
   const [zoom, setZoomInternal] = useState(DEFAULT_ZOOM);
   const prevZoom = useRef(DEFAULT_ZOOM);
@@ -62,7 +62,7 @@ export default function Weave() {
       setZoomInternal((prev) => {
         let next = setter(prev);
         next = clamp(next, MIN_ZOOM, MAX_ZOOM);
-        if (!weave || !gridRef.current) return next;
+        if (!weave || !canvas.current) return next;
 
         return next;
       });
@@ -72,7 +72,7 @@ export default function Weave() {
 
   useEffect(() => {
     if (zoom === prevZoom.current) return;
-    if (!gridRef.current) return;
+    if (!canvas.current) return;
 
     // Zoom around "center"
     const {
@@ -80,7 +80,7 @@ export default function Weave() {
       clientHeight: height,
       scrollTop,
       scrollLeft,
-    } = gridRef.current;
+    } = canvas.current;
     const zoomRatio = zoom / prevZoom.current;
 
     const centerX = scrollLeft + width / 2;
@@ -90,43 +90,29 @@ export default function Weave() {
     const newScrollX = newCenterX - width / 2;
     const newScrollY = newCenterY - height / 2;
 
-    gridRef.current.scrollTo(newScrollX, newScrollY);
+    // TODO: zoom!
+    // gridRef.current.scrollTo(newScrollX, newScrollY);
     prevZoom.current = zoom;
   }, [zoom]);
 
   const lastDragCoord = useRef<[number, number]>(null);
-  const panStart = useCallback((x: number, y: number) => {
-    lastDragCoord.current = [x, y];
-  }, []);
+
   const panNext = useCallback((newX: number, newY: number) => {
     if (!lastDragCoord.current) return;
-    if (!gridRef.current) return;
+    if (!canvas.current) return;
 
     const [prevX, prevY] = lastDragCoord.current;
 
     const dx = prevX - newX;
     const dy = prevY - newY;
 
-    gridRef.current.scrollBy(dx, dy);
+    // TODO: pan it!
+    // gridRef.current.scrollBy(dx, dy);
     lastDragCoord.current = [newX, newY];
   }, []);
 
-  const onDragStart: DragEventHandler<HTMLDivElement> = useCallback((e) => {
-    panStart(e.clientX, e.clientY);
-
-    // Prevent "ghost" image
-    const img = new Image();
-    img.src =
-      "data:image/gif;base64,R0lGODlhAQABAIAAAAUEBAAAACwAAAAAAQABAAACAkQBADs=";
-    e.dataTransfer.setDragImage(img, 0, 0);
-  }, []);
-
-  const onDragEnd: DragEventHandler<HTMLDivElement> = useCallback(() => {
-    lastDragCoord.current = null;
-  }, []);
-
   const scaleDist = useRef<number>(null);
-  const pinchDist = useCallback((e: TouchEvent<HTMLDivElement>) => {
+  const pinchDist = useCallback((e: TouchEvent<HTMLCanvasElement>) => {
     if (e.touches.length !== 2) return null;
     const x0 = e.touches[0]!.pageX;
     const y0 = e.touches[0]!.pageY;
@@ -136,7 +122,7 @@ export default function Weave() {
     return Math.hypot(x0 - x1, y0 - y1);
   }, []);
 
-  const onTouchStart: TouchEventHandler<HTMLDivElement> = useCallback(
+  const onTouchStart: TouchEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
       if (e.touches.length === 1) {
         lastDragCoord.current = [e.touches[0]!.clientX, e.touches[0]!.clientY];
@@ -149,7 +135,7 @@ export default function Weave() {
     [pinchDist],
   );
 
-  const onTouchMove: TouchEventHandler<HTMLDivElement> = useCallback(
+  const onTouchMove: TouchEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
       if (e.touches.length === 1) {
         panNext(e.touches[0]!.clientX, e.touches[0]!.clientY);
@@ -169,15 +155,15 @@ export default function Weave() {
     [pinchDist, setZoom],
   );
 
-  const onTouchEnd: TouchEventHandler<HTMLDivElement> = useCallback(() => {
+  const onTouchEnd: TouchEventHandler<HTMLCanvasElement> = useCallback(() => {
     scaleDist.current = null;
     lastDragCoord.current = null;
   }, []);
 
-  const onMouseWheel: WheelEventHandler<HTMLDivElement> = useCallback(
+  const onMouseWheel: WheelEventHandler<HTMLCanvasElement> = useCallback(
     (e) => {
       const WHEEL_INTERVAL = 1;
-      if (!gridRef.current) return;
+      if (!canvas.current) return;
       if (e.shiftKey) {
         // zoom
         e.preventDefault();
@@ -186,7 +172,7 @@ export default function Weave() {
         if (e.deltaY < 0) setZoom((zoom) => (zoom += WHEEL_INTERVAL));
       } else {
         // pan it
-        gridRef.current.scrollBy(e.deltaX, e.deltaY);
+        // TODO: pan it
       }
     },
     [setZoom],
@@ -204,8 +190,10 @@ export default function Weave() {
   const stitchSize = BASE_STITCH * zoom;
   const stitchGap = BASE_GAP * zoom;
 
-  // FIXME: zoom performance
-  // FIXME: complete stitch performance
+  // TODO: finish canvas rendering of stitches
+  // TODO: click to complete stitch
+  // TODO: long-press for stitch detail modal
+  // TODO: zoom + pan behavior verification (desktop and mobile)
 
   return (
     <>
@@ -232,70 +220,13 @@ export default function Weave() {
           setActiveColor={(id: number | undefined) => setActiveColor(id)}
         />
       )}
-      <div
-        className={`bg-gray-600 overflow-hidden grow`}
-        onDragOver={(e) => panNext(e.clientX, e.clientY)}
-        ref={gridRef}
-      >
-        <div
-          className="grid relative"
-          style={{
-            gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
-            height: height * (stitchSize + stitchGap),
-            width: width * (stitchSize + stitchGap),
-            gap: stitchGap,
-            margin: `${stitchSize}px`,
-          }}
-          draggable
-          onTouchStart={onTouchStart}
-          onTouchMove={onTouchMove}
-          onTouchEnd={onTouchEnd}
-          onDragStart={onDragStart}
-          onDragEnd={onDragEnd}
-          onWheel={onMouseWheel}
-        >
-          {pattern.mapStitches(({ stitch, x, y, index }) => {
-            const color = colors[stitch[0]]!;
-
-            return (
-              <Stitch
-                key={`stitch-${index}`}
-                size={stitchSize}
-                color={color}
-                inactive={!!activeColor && activeColor !== color.id}
-                status={stitch[1]}
-                select={() => setSelectedCell([x, y])}
-                toggleComplete={() => {
-                  pattern.toggleStitch(x, y);
-                  persistChanges();
-                }}
-              />
-            );
-          })}
-          <div className="absolute w-full h-full">
-            {[...Array(Math.floor(weave.pattern.width / 10))].map(
-              (_, xOffset) =>
-                xOffset ? (
-                  <div
-                    key={`${xOffset}-vert`}
-                    className="absolute bg-black w-1 h-full t-0"
-                    style={{ left: xOffset * (stitchSize + stitchGap) * 10 }}
-                  />
-                ) : null,
-            )}
-            {[...Array(Math.floor(weave.pattern.height / 10))].map(
-              (_, yOffset) =>
-                yOffset ? (
-                  <div
-                    key={`${yOffset}-horiz`}
-                    className="absolute bg-black h-1 w-full l-0"
-                    style={{ top: yOffset * (stitchSize + stitchGap) * 10 }}
-                  />
-                ) : null,
-            )}
-          </div>
-        </div>
-      </div>
+      <canvas
+        ref={canvas}
+        onTouchStart={onTouchStart}
+        onTouchMove={onTouchMove}
+        onTouchEnd={onTouchEnd}
+        onWheel={onMouseWheel}
+      />
     </>
   );
 }
