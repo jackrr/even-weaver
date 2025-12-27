@@ -1,6 +1,6 @@
 type RequestHandler<T extends string> = (
   req: Bun.BunRequest<T>,
-) => Promise<Response>;
+) => Promise<Response> | Response;
 
 const LOGGING_ENABLED = !!process.env.LOG_REQUESTS;
 

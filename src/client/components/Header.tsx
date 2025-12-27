@@ -1,3 +1,4 @@
+import ScreenWakeLockToggle from "./ScreenWakeLockToggle";
 import { useAuthContext } from "../auth";
 
 export default function Header() {
@@ -8,6 +9,7 @@ export default function Header() {
       <h1 className="grow">
         <a href="/">Even Weaver</a>
       </h1>
+      <ScreenWakeLockToggle />
       {!loading && loggedIn ? <a href="/logout">Log Out</a> : null}
       {!loading && !loggedIn ? (
         <div className="flex flex-row gap-4">
