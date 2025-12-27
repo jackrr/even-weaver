@@ -261,7 +261,7 @@ export default function Weave() {
               <Stitch
                 key={`stitch-${index}`}
                 size={stitchSize}
-                color={`#${color.hex}`}
+                color={color}
                 inactive={!!activeColor && activeColor !== color.id}
                 status={stitch[1]}
                 select={() => setSelectedCell([x, y])}

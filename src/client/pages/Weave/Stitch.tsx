@@ -1,14 +1,23 @@
 import { Status } from "@/util/pattern";
 import LongPressable from "@/client/components/LongPressable";
+import { type Color } from "@/client/lib/api";
 
 type Props = {
   status: Status;
-  color: string;
+  color: Color;
   select: () => void;
   toggleComplete: () => void;
   size: number;
   inactive: boolean;
 };
+
+function completeColor(color: Color) {
+  if (color.r + color.g + color.b > 300) {
+    return "333";
+  } else {
+    return "888";
+  }
+}
 
 export default function Stitch({
   status,
@@ -18,13 +27,14 @@ export default function Stitch({
   size,
   inactive,
 }: Props) {
+  const completeContrast = completeColor(color);
   return (
     <LongPressable
       threshold={200}
       onLongPress={select}
       className="flex content-center justify-center cursor-pointer z-10"
       style={{
-        backgroundColor: color,
+        backgroundColor: `#${color.hex}`,
         width: size,
         height: size,
         opacity: inactive ? 0.1 : 1,
@@ -39,7 +49,7 @@ export default function Stitch({
         <div
           className="w-full h-full"
           style={{
-            background: `repeating-linear-gradient(-45deg, transparent, transparent ${size / 8}px, #333 ${size / 8}px, #333 ${size / 4}px)`,
+            background: `repeating-linear-gradient(-45deg, transparent, transparent ${size / 6}px, #${completeContrast} ${size / 6}px, #${completeContrast} ${size / 3}px)`,
           }}
         />
       ) : null}
