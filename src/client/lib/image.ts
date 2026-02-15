@@ -20,20 +20,10 @@ export function imageToPattern(
       let width = img.width;
       let height = img.height;
 
-      // Calculate new dimensions maintaining aspect ratio
-      if (width > height) {
-        if (width > maxWidth) {
-          height = height * (maxWidth / width);
-          width = maxWidth;
-        }
-      } else {
-        if (height > maxHeight) {
-          width = width * (maxHeight / height);
-          height = maxHeight;
-        }
-      }
-      width = Math.round(width);
-      height = Math.round(height);
+      // Scale down to fit within maxWidth × maxHeight, maintaining aspect ratio
+      const scale = Math.min(maxWidth / width, maxHeight / height, 1);
+      width = Math.round(width * scale);
+      height = Math.round(height * scale);
 
       canvas.width = width;
       canvas.height = height;

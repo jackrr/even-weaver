@@ -56,44 +56,74 @@ export default function CreateWeaveModal({ open, toggleOpen }: Props) {
   }
 
   const nameRef = useRef<HTMLInputElement>(null);
+  const inputClass = "border rounded-lg p-2 w-full";
   return (
     <Modal open={open} toggleOpen={toggleOpen}>
-      <input ref={nameRef} type="text" />
-      <input
-        onChange={(e) =>
-          e.target.valueAsNumber > 0 && setMaxColors(e.target.valueAsNumber)
-        }
-        defaultValue={maxColors}
-        type="number"
-        min="1"
-        max="10000"
-      />
-      <input
-        onChange={(e) =>
-          e.target.valueAsNumber > 0 && setWidth(e.target.valueAsNumber)
-        }
-        defaultValue={width}
-        type="number"
-        min="1"
-        max="1000"
-      />
-      <input
-        onChange={(e) =>
-          e.target.valueAsNumber > 0 && setHeight(e.target.valueAsNumber)
-        }
-        defaultValue={height}
-        type="number"
-        min="1"
-        max="1000"
-      />
-      <input
-        type="file"
-        onChange={(e) =>
-          e.target.files?.length && setImagePath(e.target.files.item(0))
-        }
-      />
-      {pattern ? <PatternPreview pattern={pattern} /> : null}
-      <button onClick={submit}>Create Weave</button>
+      <div className="flex flex-col gap-3 min-w-64">
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium">Name</span>
+          <input ref={nameRef} type="text" className={inputClass} />
+        </label>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium">Max colors</span>
+          <input
+            onChange={(e) =>
+              e.target.valueAsNumber > 0 && setMaxColors(e.target.valueAsNumber)
+            }
+            defaultValue={maxColors}
+            type="number"
+            min="1"
+            max="10000"
+            className={inputClass}
+          />
+        </label>
+        <div className="flex gap-2">
+          <label className="flex flex-col gap-1 flex-1">
+            <span className="text-sm font-medium">Width</span>
+            <input
+              onChange={(e) =>
+                e.target.valueAsNumber > 0 && setWidth(e.target.valueAsNumber)
+              }
+              defaultValue={width}
+              type="number"
+              min="1"
+              max="1000"
+              className={inputClass}
+            />
+          </label>
+          <label className="flex flex-col gap-1 flex-1">
+            <span className="text-sm font-medium">Height</span>
+            <input
+              onChange={(e) =>
+                e.target.valueAsNumber > 0 && setHeight(e.target.valueAsNumber)
+              }
+              defaultValue={height}
+              type="number"
+              min="1"
+              max="1000"
+              className={inputClass}
+            />
+          </label>
+        </div>
+        <label className="flex flex-col gap-1">
+          <span className="text-sm font-medium">Image</span>
+          <input
+            type="file"
+            accept="image/*"
+            className="text-sm"
+            onChange={(e) =>
+              e.target.files?.length && setImagePath(e.target.files.item(0))
+            }
+          />
+        </label>
+        {pattern ? <PatternPreview pattern={pattern} /> : null}
+        <button
+          className="cursor-pointer px-2 py-1 border border-(--color-foreground) rounded-lg"
+          onClick={submit}
+        >
+          Create Weave
+        </button>
+      </div>
     </Modal>
   );
 }
