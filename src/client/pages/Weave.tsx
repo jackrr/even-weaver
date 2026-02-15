@@ -172,8 +172,10 @@ export default function Weave() {
 
     // ── Coordinate helpers ─────────────────────────────────────────────────────
 
-    // Keep the pattern from scrolling entirely off-screen.
-    // Allows panning so one full row/column of stitches remains visible.
+    // Stop panning exactly when the pattern edge reaches the canvas edge.
+    // For each axis: [min, max] = [right/bottom edge pinned, left/top edge pinned].
+    // When the pattern is smaller than the canvas the range inverts, letting the
+    // user position it anywhere within the visible area without going off-screen.
     function clampOffset() {
       const zoom = zoomRef.current;
       const cellSize = CELL_SIZE * zoom;
@@ -182,13 +184,13 @@ export default function Weave() {
       const contentH = wv.pattern.height * cellSize + 2 * margin;
       offsetRef.current.x = clamp(
         offsetRef.current.x,
-        -(cv.width - cellSize),   // pattern almost off the right side
-        contentW - cellSize,      // pattern almost off the left side
+        Math.min(0, contentW - cv.width),
+        Math.max(0, contentW - cv.width),
       );
       offsetRef.current.y = clamp(
         offsetRef.current.y,
-        -(cv.height - cellSize),  // pattern almost off the bottom
-        contentH - cellSize,      // pattern almost off the top
+        Math.min(0, contentH - cv.height),
+        Math.max(0, contentH - cv.height),
       );
     }
 
