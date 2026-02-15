@@ -13,9 +13,10 @@ export default function PatternPreview({ pattern }: Props) {
 
   return (
     <div
-      className={`grid gap-${GAP} bg-gray-600`}
+      className="grid bg-gray-600"
       style={{
-        gridTemplateColumns: `repeat(${width}, minmax(0, 1fr))`,
+        gridTemplateColumns: `repeat(${width}, ${STITCH_SIZE}px)`,
+        gap: GAP,
         height: height * (STITCH_SIZE + GAP),
         width: width * (STITCH_SIZE + GAP),
       }}
