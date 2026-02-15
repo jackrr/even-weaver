@@ -112,6 +112,7 @@ export default function Weave() {
       const ctx = cv.getContext("2d");
       if (!ctx) return;
 
+      clampOffset();
       const zoom = zoomRef.current;
       const { x: offsetX, y: offsetY } = offsetRef.current;
       const { pattern } = wv;
@@ -170,6 +171,26 @@ export default function Weave() {
     }
 
     // ── Coordinate helpers ─────────────────────────────────────────────────────
+
+    // Keep the pattern from scrolling entirely off-screen.
+    // Allows panning so one full row/column of stitches remains visible.
+    function clampOffset() {
+      const zoom = zoomRef.current;
+      const cellSize = CELL_SIZE * zoom;
+      const margin = BASE_STITCH * zoom;
+      const contentW = wv.pattern.width * cellSize + 2 * margin;
+      const contentH = wv.pattern.height * cellSize + 2 * margin;
+      offsetRef.current.x = clamp(
+        offsetRef.current.x,
+        -(cv.width - cellSize),   // pattern almost off the right side
+        contentW - cellSize,      // pattern almost off the left side
+      );
+      offsetRef.current.y = clamp(
+        offsetRef.current.y,
+        -(cv.height - cellSize),  // pattern almost off the bottom
+        contentH - cellSize,      // pattern almost off the top
+      );
+    }
 
     function toGrid(cx: number, cy: number): [number, number] | null {
       const zoom = zoomRef.current;
